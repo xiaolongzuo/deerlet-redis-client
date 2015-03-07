@@ -13,7 +13,12 @@ deerlet是一个简单易用的redis for java客户端，支持与spring无缝�
 ==========================================================
 \<bean id="deerletRedisClient" class="cn.zxl.deerlet.redis.client.spring.DeerletRedisClientFactoryBean"\><br/>
 &nbsp;&nbsp;\<property name="connectionPool"\><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;\<bean class="cn.zxl.deerlet.redis.client.connection.pool.ConnectionPoolImpl"\>\</bean\><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;\<bean class="cn.zxl.deerlet.redis.client.spring.ConnectionPoolFactoryBean"\><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<property name="initSize" value="20"\>\</property\><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<property name="minIdleSize" value="15"\>\</property\><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<property name="maxIdleSize" value="30"\>\</property\><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<property name="maxSize" value="100"\>\</property\><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;\</bean\><br/>
 &nbsp;&nbsp;\</property\><br/>
 \</bean\><br/>
 

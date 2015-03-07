@@ -6,7 +6,12 @@
  	
 	<bean id="deerletRedisClient" class="cn.zxl.deerlet.redis.client.spring.DeerletRedisClientFactoryBean">
 		<property name="connectionPool">
-			<bean class="cn.zxl.deerlet.redis.client.connection.pool.ConnectionPoolImpl"></bean>
+			<bean class="cn.zxl.deerlet.redis.client.spring.ConnectionPoolFactoryBean">
+				<property name="initSize" value="20"></property>
+				<property name="minIdleSize" value="15"></property>
+				<property name="maxIdleSize" value="30"></property>
+				<property name="maxSize" value="100"></property>
+			</bean>
 		</property>
 	</bean>
 	
