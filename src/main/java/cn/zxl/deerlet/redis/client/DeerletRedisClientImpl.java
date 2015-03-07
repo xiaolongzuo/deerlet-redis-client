@@ -1,5 +1,6 @@
 package cn.zxl.deerlet.redis.client;
 
+import cn.zxl.deerlet.redis.client.command.AppendCommand;
 import cn.zxl.deerlet.redis.client.command.Command;
 import cn.zxl.deerlet.redis.client.command.Commands;
 import cn.zxl.deerlet.redis.client.command.DbSizeCommand;
@@ -50,6 +51,18 @@ public class DeerletRedisClientImpl implements DeerletRedisClient {
 	@Override
 	public int dbSize() {
 		Command<Integer> command = new DbSizeCommand(obtainConnection());
+		return command.execute();
+	}
+
+	@Override
+	public int append(String key, String value) {
+		Command<Integer> command = new AppendCommand(obtainConnection());
+		return command.execute(key,TypeUtil.asString(value));
+	}
+
+	@Override
+	public boolean flushDb() {
+		Command<Boolean> command = new ResultlessCommand(obtainConnection(), Commands.flushdb);
 		return command.execute();
 	}
 

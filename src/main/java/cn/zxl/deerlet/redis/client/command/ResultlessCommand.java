@@ -21,7 +21,11 @@ public class ResultlessCommand extends AbstractCommand<Boolean> {
 
 	protected Boolean receive(DeerletInputStream inputStream, Commands command, String... arguments) throws Exception {
 		String response = IOUtil.readLineWithoutR(inputStream);
-		return ResponseUtil.isOk(response);
+		if (ResponseUtil.isOk(response)) {
+			return true;
+		} else {
+			throw new RuntimeException(ResponseUtil.extractResult(response));
+		}
 	}
 
 }

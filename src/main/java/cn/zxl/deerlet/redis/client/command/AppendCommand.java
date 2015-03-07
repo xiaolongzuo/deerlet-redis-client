@@ -1,3 +1,6 @@
+/**
+ * 
+ */
 package cn.zxl.deerlet.redis.client.command;
 
 import cn.zxl.deerlet.redis.client.connection.Connection;
@@ -6,17 +9,16 @@ import cn.zxl.deerlet.redis.client.util.IOUtil;
 import cn.zxl.deerlet.redis.client.util.ResponseUtil;
 
 /**
- * 
- * dbsize命令的实现类
- *
  * @author zuoxiaolong
- * @since 2015 2015年3月6日 下午11:36:42
  *
  */
-public class DbSizeCommand extends AbstractCommand<Integer> {
+public class AppendCommand extends AbstractCommand<Integer> {
 
-	public DbSizeCommand(Connection connection) {
-		super(connection, Commands.dbsize);
+	/**
+	 * @param connection
+	 */
+	public AppendCommand(Connection connection) {
+		super(connection,Commands.append);
 	}
 
 	@Override
@@ -25,7 +27,7 @@ public class DbSizeCommand extends AbstractCommand<Integer> {
 		if (ResponseUtil.isIntResultOk(response)) {
 			return Integer.valueOf(ResponseUtil.extractResult(response));
 		} else {
-			throw new RuntimeException("dbsize command exception.");
+			return 0;
 		}
 	}
 

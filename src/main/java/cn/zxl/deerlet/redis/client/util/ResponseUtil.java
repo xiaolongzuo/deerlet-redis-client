@@ -9,17 +9,39 @@ package cn.zxl.deerlet.redis.client.util;
  *
  */
 public abstract class ResponseUtil {
+	
+	private static final String trueResultPrefix = "+";
+	
+	private static final String falseResultPrefix = "-";
+	
+	private static final String intResultPrefix = ":";
+	
+	private static final String stringLengthResultPrefix = "$";
+	
+	private static final String arrayLengthResultPrefix = "*";
 
 	public static boolean isOk(String response) {
-		return "+OK".equals(response);
+		return response != null && response.startsWith(trueResultPrefix);
+	}
+	
+	public static boolean isError(String response) {
+		return response != null && response.startsWith(falseResultPrefix);
+	}
+	
+	public static boolean isStringLengthResultOk(String response) {
+		return response != null && response.startsWith(stringLengthResultPrefix);
 	}
 
-	public static boolean isGetOk(String response) {
-		return response != null && response.startsWith("$");
+	public static boolean isIntResultOk(String response) {
+		return response != null && response.startsWith(intResultPrefix);
 	}
-
-	public static boolean isDbSizeOk(String response) {
-		return response != null && response.startsWith(":");
+	
+	public static boolean isArrayLengthResultOk(String response){
+		return response != null && response.startsWith(arrayLengthResultPrefix);
+	}
+	
+	public static String extractResult(String response){
+		return isOk(response) ? null : response.substring(1);
 	}
 
 }

@@ -22,11 +22,11 @@ public class GetCommand extends AbstractCommand<String> {
 	@Override
 	protected String receive(DeerletInputStream inputStream, Commands command, String... arguments) throws Exception {
 		String response = IOUtil.readLineWithoutR(inputStream);
-		if (ResponseUtil.isGetOk(response)) {
-			return IOUtil.readLineWithoutR(inputStream);
-		} else {
-			return null;
+		String result = null;
+		if (ResponseUtil.isStringLengthResultOk(response)) {
+			result = IOUtil.readLineWithoutR(inputStream); 
 		}
+		return result;
 	}
 
 }

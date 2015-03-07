@@ -10,6 +10,6 @@ package cn.zxl.deerlet.redis.client.command;
  */
 public enum Commands {
 
-	set, get, flushall, dbsize
+	set, get, flushall, dbsize, append, flushdb
 
 }

@@ -50,6 +50,21 @@ public class DeerletRedisClientTest {
 		}
 		Assert.assertEquals(size, deerletRedisClient.dbSize());
 	}
+	
+	@Test
+	public void testAppend() throws IOException {
+		deerletRedisClient.set("testKey", "testValue");
+		int length = deerletRedisClient.append("testKey", "Append");
+		Assert.assertEquals("testValue".length() + "Append".length(), length);
+		Assert.assertEquals("testValueAppend", deerletRedisClient.get("testKey"));
+	}
+	
+	@Test
+	public void testFlushDb() throws IOException {
+		deerletRedisClient.set("testKey", "testValue");
+		deerletRedisClient.flushDb();
+		Assert.assertEquals(0, deerletRedisClient.dbSize());
+	}
 
 	@Test
 	public void testMultiThread() throws IOException, InterruptedException, BrokenBarrierException {

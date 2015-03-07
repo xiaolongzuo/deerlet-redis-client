@@ -11,11 +11,17 @@ package cn.zxl.deerlet.redis.client;
 public interface DeerletRedisClient {
 
 	public boolean set(String key, String value);
+	
+	public int append(String key,String value);
 
 	public String get(String key);
 
 	public boolean flushAll();
+	
+	public boolean flushDb();
 
 	public int dbSize();
+	
+	
 
 }
