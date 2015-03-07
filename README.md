@@ -6,6 +6,7 @@ deerlet是一个简单易用的redis for java客户端，支持与spring无缝�
 1，轻量级，jar包只有25kb。<br/>
 2，简单易用，无侵入性。<br/>
 3，可以与当前流行的ioc容器spring无缝集成。<br/>
+4，API完全与redis命令保持一致，减少学习成本。<br/>
 
 # 使用示例
 
