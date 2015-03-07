@@ -26,11 +26,11 @@ port=6379<br/>
 
 ### 3.使用以下编程式的方式即可使用deerlet
 ```java
-ApplicationContext applicationContext = new<br/> FileSystemXmlApplicationContext("classpath:applicationContext.xml");//初始化spring容器<br/>
-DeerletRedisClient deerletRedisClient = applicationContext.getBean(DeerletRedisClient.class);//获取client对象<br/>
+ApplicationContext applicationContext = new FileSystemXmlApplicationContext("classpath:applicationContext.xml");//初始化spring容器
+DeerletRedisClient deerletRedisClient = applicationContext.getBean(DeerletRedisClient.class);//获取client对象
 
-deerletRedisClient.set("testKey","testValue");//存储一个键为testKey，值为testValue的键值对<br/>
-System.out.println(deerletRedisClient.get("testKey"));//获取<br/>
-System.out.println(deerletRedisClient.dbSize());//查看大小<br/>
-deerletRedisClient.flushAll();//刷新<br/>
-System.out.println(deerletRedisClient.dbSize());//查看大小<br/>
+deerletRedisClient.set("testKey","testValue");//存储一个键为testKey，值为testValue的键值对
+System.out.println(deerletRedisClient.get("testKey"));//获取
+System.out.println(deerletRedisClient.dbSize());//查看大小
+deerletRedisClient.flushAll();//刷新
+System.out.println(deerletRedisClient.dbSize());//查看大小
