@@ -38,7 +38,7 @@ public abstract class AbstractCommand<T> implements Command<T> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public T execute(String... arguments) {
+	public T execute(Object... arguments) {
 		T result = null;
 		try {
 			send(connection.getOutputStream(), command, arguments);
@@ -54,10 +54,10 @@ public abstract class AbstractCommand<T> implements Command<T> {
 		return connection;
 	}
 
-	protected void send(DeerletOutputStream outputStream, Commands command, String... arguments) throws Exception {
+	protected void send(DeerletOutputStream outputStream, Commands command, Object... arguments) throws Exception {
 		IOUtil.write(outputStream, command, arguments);
 	}
 
-	protected abstract Object receive(DeerletInputStream inputStream, Commands command, String... arguments) throws Exception;
+	protected abstract Object receive(DeerletInputStream inputStream, Commands command, Object... arguments) throws Exception;
 
 }

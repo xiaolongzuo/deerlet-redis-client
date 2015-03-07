@@ -17,12 +17,12 @@ import cn.zxl.deerlet.redis.client.io.DeerletOutputStream;
  */
 public abstract class IOUtil {
 
-	public static void write(DeerletOutputStream outputStream, Commands command, String[] arguments) throws UnsupportedEncodingException, IOException {
-		outputStream.writeString(command.name());
+	public static void write(DeerletOutputStream outputStream, Commands command, Object[] arguments) throws UnsupportedEncodingException, IOException {
+		outputStream.writeObject(command.name());
 		if (arguments != null) {
 			for (int i = 0; i < arguments.length; i++) {
 				outputStream.writeSpace();
-				outputStream.writeString(arguments[i]);
+				outputStream.writeObject(arguments[i]);
 			}
 		}
 		outputStream.writeEnter();

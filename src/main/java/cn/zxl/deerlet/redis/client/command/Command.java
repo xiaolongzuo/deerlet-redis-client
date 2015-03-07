@@ -10,6 +10,6 @@ package cn.zxl.deerlet.redis.client.command;
  */
 public interface Command<T> {
 
-	public T execute(String... arguments);
+	public T execute(Object... arguments);
 
 }

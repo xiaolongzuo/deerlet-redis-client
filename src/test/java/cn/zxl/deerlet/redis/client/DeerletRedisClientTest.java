@@ -65,6 +65,49 @@ public class DeerletRedisClientTest {
 		deerletRedisClient.flushDb();
 		Assert.assertEquals(0, deerletRedisClient.dbSize());
 	}
+	
+	@Test 
+	public void testIncrBy() {
+		deerletRedisClient.set("testKey", 10);
+		Assert.assertEquals(10 + 2, deerletRedisClient.incrBy("testKey", 2));
+	}
+	
+	@Test 
+	public void testIncr() {
+		deerletRedisClient.set("testKey", 10);
+		Assert.assertEquals(10 + 1, deerletRedisClient.incr("testKey"));
+	}
+	
+	@Test 
+	public void testIncrByFloat() {
+		deerletRedisClient.set("testKey", 10);
+		Assert.assertEquals(10+1.1F, deerletRedisClient.incrByFloat("testKey", 1.1F));
+	}
+	
+	@Test 
+	public void testDecrBy() {
+		deerletRedisClient.set("testKey", 10);
+		Assert.assertEquals(10 - 2, deerletRedisClient.decrBy("testKey", 2));
+	}
+	
+	@Test 
+	public void testDecr() {
+		deerletRedisClient.set("testKey", 10);
+		Assert.assertEquals(10 - 1, deerletRedisClient.decr("testKey"));
+	}
+	
+	@Test 
+	public void testDel() {
+		deerletRedisClient.set("testKey", 10);
+		Assert.assertNotNull(deerletRedisClient.get("testKey"));
+		deerletRedisClient.del("testKey");
+		Assert.assertNull(deerletRedisClient.get("testKey"));
+	}
+	
+	@Test 
+	public void testBgSave() {
+		Assert.assertTrue(deerletRedisClient.bgSave());
+	}
 
 	@Test
 	public void testMultiThread() throws IOException, InterruptedException, BrokenBarrierException {

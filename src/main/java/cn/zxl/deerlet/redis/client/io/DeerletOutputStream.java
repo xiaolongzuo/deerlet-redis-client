@@ -47,8 +47,8 @@ public class DeerletOutputStream {
 		outputStream.write('\n');
 	}
 
-	public void writeString(String s) throws UnsupportedEncodingException, IOException {
-		outputStream.write(s.getBytes("utf-8"));
+	public void writeObject(Object o) throws UnsupportedEncodingException, IOException {
+		outputStream.write(o.toString().getBytes("utf-8"));
 	}
 
 }

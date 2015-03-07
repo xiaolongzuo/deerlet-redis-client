@@ -41,7 +41,7 @@ public abstract class ResponseUtil {
 	}
 	
 	public static String extractResult(String response){
-		return isOk(response) ? null : response.substring(1);
+		return (response == null || response.length() == 0) ? null : response.substring(1);
 	}
 
 }

@@ -10,17 +10,21 @@ package cn.zxl.deerlet.redis.client.util;
  */
 public abstract class TypeUtil {
 
-	public static String asString(String s) {
-		return "'" + s + "'";
+	public static String asString(Object o) {
+		if (o instanceof String) {
+			return "'" + o + "'";
+		} else {
+			return o.toString();
+		}
 	}
 
-	public static String[] asString(String[] ss, int... indexs) {
+	public static Object[] asString(Object[] oo, int... indexs) {
 		if (indexs != null) {
 			for (int i = 0; i < indexs.length; i++) {
-				ss[indexs[i]] = asString(ss[indexs[i]]);
+				oo[indexs[i]] = asString(oo[indexs[i]]);
 			}
 		}
-		return ss;
+		return oo;
 	}
-
+	
 }
