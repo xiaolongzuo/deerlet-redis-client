@@ -33,6 +33,9 @@ public class SpringTest {
 	
 	@Test
 	public void testCommand() {
+		deerletRedisClient.set("testKey","testValue");
+		Assert.assertEquals("testValue", deerletRedisClient.get("testKey"));
+		Assert.assertEquals(1, deerletRedisClient.dbSize());
 		deerletRedisClient.flushAll();
 		Assert.assertEquals(0, deerletRedisClient.dbSize());
 	}
