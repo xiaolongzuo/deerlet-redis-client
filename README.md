@@ -10,7 +10,7 @@ deerlet是一个简单易用的redis for java客户端，支持与spring无缝�
 
 # 使用示例
 
-# 1.在spring的配置文件中加入如下bean定义
+### 1.在spring的配置文件中加入如下bean定义
 ==========================================================
 \<bean id="deerletRedisClient" class="cn.zxl.deerlet.redis.client.spring.DeerletRedisClientFactoryBean"\><br/>
 &nbsp;&nbsp;\<property name="connectionPool"\><br/>
@@ -23,7 +23,7 @@ deerlet是一个简单易用的redis for java客户端，支持与spring无缝�
 &nbsp;&nbsp;\</property\><br/>
 \</bean\><br/>
 
-# 2.在classpath（比如eclipse中src下）路径下添加以下文件，名为deerlet.properties
+### 2.在classpath（比如eclipse中src下）路径下添加以下文件，名为deerlet.properties
 ==========================================================
 \#该属性为redis服务器ip<br/>
 address=localhost<br/>
