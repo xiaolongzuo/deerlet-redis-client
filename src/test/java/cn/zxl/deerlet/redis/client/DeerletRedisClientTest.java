@@ -1,6 +1,7 @@
 package cn.zxl.deerlet.redis.client;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 
@@ -131,4 +132,39 @@ public class DeerletRedisClientTest {
 		cyclicBarrier.await();
 		Assert.assertEquals(size, deerletRedisClient.dbSize());
 	}
+	
+	@Test 
+	public void testLPushAndLLen() {
+		deerletRedisClient.lpush("testList", "1", "2", "3", "4", "5");
+		Assert.assertEquals(5, deerletRedisClient.llen("testList"));
+		Assert.assertEquals("5", deerletRedisClient.lindex("testList", 0));
+	}
+	
+	@Test 
+	public void testLIndex() {
+		deerletRedisClient.lpush("testList", "1", "2", "3", "4", "5");
+		Assert.assertEquals("5", deerletRedisClient.lindex("testList", 0));
+		Assert.assertEquals("4", deerletRedisClient.lindex("testList", 1));
+		Assert.assertEquals("3", deerletRedisClient.lindex("testList", 2));
+		Assert.assertEquals("2", deerletRedisClient.lindex("testList", 3));
+		Assert.assertEquals("1", deerletRedisClient.lindex("testList", 4));
+		
+		Assert.assertEquals("1", deerletRedisClient.lindex("testList", -1));
+		Assert.assertEquals("2", deerletRedisClient.lindex("testList", -2));
+		Assert.assertEquals("3", deerletRedisClient.lindex("testList", -3));
+		Assert.assertEquals("4", deerletRedisClient.lindex("testList", -4));
+		Assert.assertEquals("5", deerletRedisClient.lindex("testList", -5));
+	}
+	
+	@Test 
+	public void testLRange() {
+		Object[] ss = new Object[]{"1", "2", "3", "4", "5"};
+		deerletRedisClient.lpush("testList", ss);
+		List<String> list = deerletRedisClient.lrange("testList", 0, -1);
+		Assert.assertEquals(ss.length, list.size());
+		for (int i = 0; i < list.size(); i++) {
+			Assert.assertEquals(ss[i], list.get(ss.length - i - 1));
+		}
+	}
+	
 }

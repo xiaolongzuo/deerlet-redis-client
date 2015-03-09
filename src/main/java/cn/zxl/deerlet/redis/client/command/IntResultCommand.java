@@ -5,8 +5,7 @@ package cn.zxl.deerlet.redis.client.command;
 
 import cn.zxl.deerlet.redis.client.connection.Connection;
 import cn.zxl.deerlet.redis.client.io.DeerletInputStream;
-import cn.zxl.deerlet.redis.client.util.IOUtil;
-import cn.zxl.deerlet.redis.client.util.ResponseUtil;
+import cn.zxl.deerlet.redis.client.util.ProtocolUtil;
 
 /**
  * 结果为int类型的命令的实现类
@@ -24,9 +23,9 @@ public class IntResultCommand extends AbstractCommand<Integer> {
 
 	@Override
 	protected Integer receive(DeerletInputStream inputStream, Commands command, Object... arguments) throws Exception {
-		String response = IOUtil.readLineWithoutR(inputStream);
-		if (ResponseUtil.isIntResultOk(response)) {
-			return Integer.valueOf(ResponseUtil.extractResult(response));
+		String response = inputStream.readLineWithoutR();
+		if (ProtocolUtil.isIntResultOk(response)) {
+			return Integer.valueOf(ProtocolUtil.extractResult(response));
 		} else {
 			return 0;
 		}

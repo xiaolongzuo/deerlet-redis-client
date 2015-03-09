@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 
+import cn.zxl.deerlet.redis.client.util.ProtocolUtil;
+import cn.zxl.deerlet.redis.client.util.TypeUtil;
+
 /**
  * 
  * 为了方便写入操作的装饰类。
@@ -40,15 +43,15 @@ public class DeerletOutputStream {
 	}
 
 	public void writeSpace() throws IOException {
-		outputStream.write('\r');
+		outputStream.write(ProtocolUtil.space());
 	}
 
 	public void writeEnter() throws IOException {
-		outputStream.write('\n');
+		outputStream.write(ProtocolUtil.enter());
 	}
 
 	public void writeObject(Object o) throws UnsupportedEncodingException, IOException {
-		outputStream.write(o.toString().getBytes("utf-8"));
+		outputStream.write(TypeUtil.asBytes(o));
 	}
 
 }

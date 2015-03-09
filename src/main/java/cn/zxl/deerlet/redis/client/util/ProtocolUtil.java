@@ -8,7 +8,7 @@ package cn.zxl.deerlet.redis.client.util;
  * @since 2015 2015年3月6日 下午11:44:47
  *
  */
-public abstract class ResponseUtil {
+public abstract class ProtocolUtil {
 	
 	private static final String trueResultPrefix = "+";
 	
@@ -19,6 +19,14 @@ public abstract class ResponseUtil {
 	private static final String stringLengthResultPrefix = "$";
 	
 	private static final String arrayLengthResultPrefix = "*";
+	
+	public static int space() {
+		return '\r';
+	}
+	
+	public static int enter() {
+		return '\n';
+	}
 
 	public static boolean isOk(String response) {
 		return response != null && response.startsWith(trueResultPrefix);
@@ -38,6 +46,14 @@ public abstract class ResponseUtil {
 	
 	public static boolean isArrayLengthResultOk(String response){
 		return response != null && response.startsWith(arrayLengthResultPrefix);
+	}
+	
+	public static boolean intResultToBooleanResult(String response) {
+		return response != null && isIntResultOk(response) && Integer.valueOf(extractResult(response)) > 0;
+	}
+	
+	public static boolean intResultToBooleanResult(int intResult) {
+		return intResult > 0;
 	}
 	
 	public static String extractResult(String response){

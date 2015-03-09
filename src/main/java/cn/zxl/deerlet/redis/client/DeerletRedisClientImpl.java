@@ -1,13 +1,17 @@
 package cn.zxl.deerlet.redis.client;
 
+import java.util.List;
+
 import cn.zxl.deerlet.redis.client.command.IntResultCommand;
 import cn.zxl.deerlet.redis.client.command.Command;
 import cn.zxl.deerlet.redis.client.command.Commands;
+import cn.zxl.deerlet.redis.client.command.LInsertOptions;
+import cn.zxl.deerlet.redis.client.command.ListResultCommand;
 import cn.zxl.deerlet.redis.client.command.StringResultCommand;
 import cn.zxl.deerlet.redis.client.command.BooleanResultCommand;
 import cn.zxl.deerlet.redis.client.connection.Connection;
 import cn.zxl.deerlet.redis.client.connection.pool.ConnectionPool;
-import cn.zxl.deerlet.redis.client.util.TypeUtil;
+import cn.zxl.deerlet.redis.client.util.ProtocolUtil;
 
 /**
  * 
@@ -40,7 +44,7 @@ public class DeerletRedisClientImpl implements DeerletRedisClient {
 
 	@Override
 	public boolean set(String key, Object value) {
-		return executeCommand(BooleanResultCommand.class, Commands.set, key, TypeUtil.asString(value));
+		return executeCommand(BooleanResultCommand.class, Commands.set, key, value);
 	}
 
 	@Override
@@ -60,7 +64,7 @@ public class DeerletRedisClientImpl implements DeerletRedisClient {
 
 	@Override
 	public int append(String key, String value) {
-		return executeCommand(IntResultCommand.class, Commands.append, key, TypeUtil.asString(value));
+		return executeCommand(IntResultCommand.class, Commands.append, key, value);
 	}
 
 	@Override
@@ -71,6 +75,21 @@ public class DeerletRedisClientImpl implements DeerletRedisClient {
 	@Override
 	public boolean bgSave() {
 		return executeCommand(BooleanResultCommand.class, Commands.bgsave);
+	}
+	
+	@Override
+	public boolean bgRewriteAof() {
+		return executeCommand(BooleanResultCommand.class, Commands.bgrewriteaof);
+	}
+	
+	@Override
+	public boolean exists(String key) {
+		return ProtocolUtil.intResultToBooleanResult(executeCommand(IntResultCommand.class, Commands.exists, key));
+	}
+	
+	@Override
+	public boolean expire(String key, int seconds) {
+		return ProtocolUtil.intResultToBooleanResult(executeCommand(IntResultCommand.class, Commands.expire, key, seconds));
 	}
 
 	@Override
@@ -101,6 +120,56 @@ public class DeerletRedisClientImpl implements DeerletRedisClient {
 	@Override
 	public float incrByFloat(String key, float increment) {
 		return Float.valueOf(executeCommand(StringResultCommand.class, Commands.incrbyfloat, key, increment));
+	}
+
+	@Override
+	public boolean lset(String listKey, int index, Object value) {
+		return executeCommand(BooleanResultCommand.class, Commands.lset, listKey, index, value);
+	}
+
+	@Override
+	public int lpush(String listKey, Object... values) {
+		return executeCommand(IntResultCommand.class, Commands.lpush, listKey, values);
+	}
+
+	@Override
+	public List<String> lrange(String listKey, int start, int stop) {
+		return executeCommand(ListResultCommand.class, Commands.lrange, listKey, start, stop);
+	}
+
+	@Override
+	public int llen(String listKey) {
+		return executeCommand(IntResultCommand.class, Commands.llen, listKey);
+	}
+
+	@Override
+	public int lpushx(String listKey, Object value) {
+		return executeCommand(IntResultCommand.class, Commands.lpushx, listKey, value);
+	}
+
+	@Override
+	public String lpop(String listKey) {
+		return executeCommand(StringResultCommand.class, Commands.lpop, listKey);
+	}
+
+	@Override
+	public int lrem(String listKey, int count, Object value) {
+		return executeCommand(IntResultCommand.class, Commands.lrem, listKey, count, value);
+	}
+
+	@Override
+	public String lindex(String listKey, int index) {
+		return executeCommand(StringResultCommand.class, Commands.lindex, listKey, index);
+	}
+
+	@Override
+	public int linsert(String listKey, LInsertOptions option, Object pivot, Object value) {
+		return executeCommand(IntResultCommand.class, Commands.linsert, listKey, option, pivot, value);
+	}
+
+	@Override
+	public boolean ltrim(String listKey, int start, int stop) {
+		return executeCommand(BooleanResultCommand.class, Commands.ltrim, listKey, start, stop);
 	}
 	
 }

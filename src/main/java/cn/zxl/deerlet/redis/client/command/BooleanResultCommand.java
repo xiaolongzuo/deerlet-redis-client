@@ -2,8 +2,7 @@ package cn.zxl.deerlet.redis.client.command;
 
 import cn.zxl.deerlet.redis.client.connection.Connection;
 import cn.zxl.deerlet.redis.client.io.DeerletInputStream;
-import cn.zxl.deerlet.redis.client.util.IOUtil;
-import cn.zxl.deerlet.redis.client.util.ResponseUtil;
+import cn.zxl.deerlet.redis.client.util.ProtocolUtil;
 
 /**
  * 
@@ -20,11 +19,11 @@ public class BooleanResultCommand extends AbstractCommand<Boolean> {
 	}
 
 	protected Boolean receive(DeerletInputStream inputStream, Commands command, Object... arguments) throws Exception {
-		String response = IOUtil.readLineWithoutR(inputStream);
-		if (ResponseUtil.isOk(response)) {
+		String response = inputStream.readLineWithoutR();
+		if (ProtocolUtil.isOk(response)) {
 			return true;
 		} else {
-			throw new RuntimeException(ResponseUtil.extractResult(response));
+			throw new RuntimeException(ProtocolUtil.extractResult(response));
 		}
 	}
 

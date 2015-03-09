@@ -3,7 +3,6 @@ package cn.zxl.deerlet.redis.client.command;
 import cn.zxl.deerlet.redis.client.connection.Connection;
 import cn.zxl.deerlet.redis.client.io.DeerletInputStream;
 import cn.zxl.deerlet.redis.client.io.DeerletOutputStream;
-import cn.zxl.deerlet.redis.client.util.IOUtil;
 
 /**
  * 
@@ -55,7 +54,15 @@ public abstract class AbstractCommand<T> implements Command<T> {
 	}
 
 	protected void send(DeerletOutputStream outputStream, Commands command, Object... arguments) throws Exception {
-		IOUtil.write(outputStream, command, arguments);
+		outputStream.writeObject(command.name());
+		if (arguments != null) {
+			for (int i = 0; i < arguments.length; i++) {
+				outputStream.writeSpace();
+				outputStream.writeObject(arguments[i]);
+			}
+		}
+		outputStream.writeEnter();
+		outputStream.flush();
 	}
 
 	protected abstract Object receive(DeerletInputStream inputStream, Commands command, Object... arguments) throws Exception;

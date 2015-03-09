@@ -1,5 +1,9 @@
 package cn.zxl.deerlet.redis.client;
 
+import java.util.List;
+
+import cn.zxl.deerlet.redis.client.command.LInsertOptions;
+
 /**
  * 
  * deerlet客户端的客户端操作接口，其中定义了本组件支持的redis操作。
@@ -10,6 +14,8 @@ package cn.zxl.deerlet.redis.client;
  */
 public interface DeerletRedisClient {
 
+	/** ——————————————常用的common操作—————————————— */
+	
 	/**
 	 * 存储一对键值对
 	 * @param key
@@ -57,6 +63,18 @@ public interface DeerletRedisClient {
 	 */
 	public boolean bgSave();
 	
+	public boolean bgRewriteAof();
+	
+	public boolean exists(String key);
+	
+	public boolean expire(String key, int seconds);
+	
+	/** ——————————————常用的common操作结束—————————————— */
+	
+	
+	
+	/** ——————————————decrement与increment相关操作—————————————— */
+	
 	/**
 	 * 把当前key中存储的值减去1
 	 * @param key
@@ -101,5 +119,33 @@ public interface DeerletRedisClient {
 	 * @return 当前存储的值
 	 */
 	public float incrByFloat(String key, float increment);
+	
+	/** ——————————————decrement与increment相关操作结束—————————————— */
+	
+	
+	
+	/** ——————————————列表相关的操作—————————————— */
+	
+	public boolean lset(String listKey, int index, Object value);
+	
+	public int lpush(String listKey, Object... values);
+	
+	public List<String> lrange(String listKey, int start, int stop);
+	
+	public int llen(String listKey);
+	
+	public int lpushx(String listKey, Object value);
+	
+	public String lpop(String listKey);
+	
+	public int lrem(String listKey, int count, Object value);
+	
+	public String lindex(String listKey, int index);
+	
+	public int linsert(String listKey, LInsertOptions option,Object pivot,Object value);
+	
+	public boolean ltrim(String listKey, int start, int stop);
+	
+	/** ——————————————列表相关操作结束—————————————— */
 	
 }

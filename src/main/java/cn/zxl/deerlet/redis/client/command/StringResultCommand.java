@@ -2,8 +2,7 @@ package cn.zxl.deerlet.redis.client.command;
 
 import cn.zxl.deerlet.redis.client.connection.Connection;
 import cn.zxl.deerlet.redis.client.io.DeerletInputStream;
-import cn.zxl.deerlet.redis.client.util.IOUtil;
-import cn.zxl.deerlet.redis.client.util.ResponseUtil;
+import cn.zxl.deerlet.redis.client.util.ProtocolUtil;
 
 /**
  * 
@@ -21,10 +20,10 @@ public class StringResultCommand extends AbstractCommand<String> {
 
 	@Override
 	protected String receive(DeerletInputStream inputStream, Commands command, Object... arguments) throws Exception {
-		String response = IOUtil.readLineWithoutR(inputStream);
+		String response = inputStream.readLineWithoutR();
 		String result = null;
-		if (ResponseUtil.isStringLengthResultOk(response) && Integer.valueOf(ResponseUtil.extractResult(response)) > 0) {
-			result = IOUtil.readLineWithoutR(inputStream); 
+		if (ProtocolUtil.isStringLengthResultOk(response) && Integer.valueOf(ProtocolUtil.extractResult(response)) > 0) {
+			result = inputStream.readLineWithoutR(); 
 		}
 		return result;
 	}
