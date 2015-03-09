@@ -8,7 +8,26 @@ deerlet是一个简单易用的redis for java客户端，支持与spring无缝�
 3，可以与当前流行的ioc容器spring无缝集成。<br/>
 4，API完全与redis命令保持一致，减少学习成本。<br/>
 
-# 使用示例
+# 使用示例（独立使用）
+
+### 1.在classpath（比如eclipse中src下）路径下添加以下文件，名为deerlet.properties
+==========================================================
+\#该属性为redis服务器ip<br/>
+address=localhost<br/>
+\#该属性为redis服务器端口<br/>
+port=6379<br/>
+
+### 2.使用以下编程式的方式即可使用deerlet
+```java
+DeerletRedisClient deerletRedisClient = new DeerletRedisClientImpl(new ConnectionPoolImpl());//获取client对象
+
+deerletRedisClient.set("testKey","testValue");//存储一个键为testKey，值为testValue的键值对
+System.out.println(deerletRedisClient.get("testKey"));//获取
+System.out.println(deerletRedisClient.dbSize());//查看大小
+deerletRedisClient.flushAll();//刷新
+System.out.println(deerletRedisClient.dbSize());//查看大小
+
+# 使用示例（与spring集成）
 
 ### 1.在spring的配置文件中加入如下bean定义
 ==========================================================
