@@ -58,11 +58,15 @@ public interface DeerletRedisClient {
 	public int dbSize();
 	
 	/**
-	 * 开启一个线程进行持久化操作
+	 * 在后台异步(Asynchronously)保存当前数据库的数据到磁盘
 	 * @return 是否成功
 	 */
 	public boolean bgSave();
 	
+	/**
+	 * 执行一个 AOF文件 重写操作。重写会创建一个当前 AOF 文件的体积优化版本。
+	 * @return
+	 */
 	public boolean bgRewriteAof();
 	
 	public boolean exists(String key);

@@ -14,6 +14,8 @@ import cn.zxl.deerlet.redis.client.io.DeerletOutputStream;
  */
 public abstract class AbstractCommand<T> implements Command<T> {
 
+	private static final String COMMAND_SEPARATOR = "_";
+	
 	private Connection connection;
 
 	private Commands command;
@@ -54,7 +56,14 @@ public abstract class AbstractCommand<T> implements Command<T> {
 	}
 
 	protected void send(DeerletOutputStream outputStream, Commands command, Object... arguments) throws Exception {
-		outputStream.writeObject(command.name());
+		if (command.name().indexOf(COMMAND_SEPARATOR) > 0) {
+			String[] commands = command.name().split(COMMAND_SEPARATOR);
+			outputStream.writeObject(commands[0]);
+			outputStream.writeSpace();
+			outputStream.writeObject(commands[1]);
+		} else {
+			outputStream.writeObject(command.name());
+		}
 		if (arguments != null) {
 			for (int i = 0; i < arguments.length; i++) {
 				outputStream.writeSpace();
