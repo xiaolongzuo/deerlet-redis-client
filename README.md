@@ -26,7 +26,7 @@ System.out.println(deerletRedisClient.get("testKey"));//获取
 System.out.println(deerletRedisClient.dbSize());//查看大小
 deerletRedisClient.flushAll();//刷新
 System.out.println(deerletRedisClient.dbSize());//查看大小
-==========================================================
+```
 
 # 使用示例（与spring集成）
 
