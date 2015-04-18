@@ -13,122 +13,145 @@ import cn.zxl.deerlet.redis.client.command.LInsertOptions;
  *
  */
 public interface DeerletRedisClient {
-
-	/** ——————————————常用的common操作—————————————— */
 	
-	/**
-	 * 存储一对键值对
-	 * @param key
-	 * @param value
-	 * @return 是否成功
-	 */
-	public boolean set(String key, Object value);
+	/** Key commands */
+	/* del,dump,exists,expire,expireat,keys,migrate,move,object,persist
+	,pexpire,pexpireat,pttl,randomkey,rename,renamenx,restore,sort,ttl,type,scan */
 	
-	/**
-	 * 给当前key中存储的值追加value
-	 * @param key
-	 * @param value
-	 * @return 追加以后value的总长度
-	 */
-	public int append(String key,String value);
-
-	/**
-	 * 根据键获取值
-	 * @param key
-	 * @return 对应的value
-	 */
-	public String get(String key);
-
-	/**
-	 * 刷新所有db，将清空所有db中的键值对
-	 * @return 是否成功
-	 */
-	public boolean flushAll();
+	public int del(String key);
 	
-	/**
-	 * 刷新当前db，将清空所有db中的键值对
-	 * @return 是否成功
-	 */
-	public boolean flushDb();
-
-	/**
-	 * 返回当前db的大小
-	 * @return 大小
-	 */
-	public int dbSize();
-	
-	/**
-	 * 在后台异步(Asynchronously)保存当前数据库的数据到磁盘
-	 * @return 是否成功
-	 */
-	public boolean bgSave();
-	
-	/**
-	 * 执行一个 AOF文件 重写操作。重写会创建一个当前 AOF 文件的体积优化版本。
-	 * @return
-	 */
-	public boolean bgRewriteAof();
+	public byte[] dump(String key);
 	
 	public boolean exists(String key);
 	
 	public boolean expire(String key, int seconds);
 	
-	/** ——————————————常用的common操作结束—————————————— */
+	public void expireat();
 	
+	public void keys();
 	
+	public void migrate();
 	
-	/** ——————————————decrement与increment相关操作—————————————— */
+	public void move();
 	
-	/**
-	 * 把当前key中存储的值减去1
-	 * @param key
-	 * @return 当前存储的值
-	 */
+	public void object();
+	
+	public void persist();
+	
+	public void pexpire();
+	
+	public void pexpireat();
+	
+	public void pttl();
+	
+	public void randomkey();
+	
+	public void rename();
+	
+	public void renamenx();
+	
+	public boolean restore(String key, int ttl, byte[] serializedValue);
+	
+	public void sort();
+	
+	public void ttl();
+	
+	public void type();
+	
+	public void scan();
+	
+
+	/** String commands */
+	/* append,bitcount,bitop,decr,decrby,get,getbit,getrange,getset,incr,incrby
+	,incrbyfloat,mget,mset,msetnx,psetex,set,setbit,setex,setnx,setrange,strlen */
+	
+	public int append(String key,String value);
+	
+	public void bitcount();
+	
+	public void bitop();
+	
 	public int decr(String key);
 	
-	/**
-	 * 把当前key中存储的值减去decrement
-	 * @param key
-	 * @param decrement
-	 * @return 当前存储的值
-	 */
-	public int decrBy(String key, int decrement);
+	public int decrby(String key, int decrement);
 
-	/**
-	 * 根据键删除一个键值对
-	 * @param key
-	 * @return 删除的个数
-	 */
-	public int del(String key);
-	
-	/**
-	 * 把当前key中存储的值加上1
-	 * @param key
-	 * @return 当前存储的值
-	 */
 	public int incr(String key);
 	
-	/**
-	 * 把当前key中存储的值加上increment
-	 * @param key
-	 * @param increment
-	 * @return 当前存储的值
-	 */
-	public int incrBy(String key, int increment);
+	public int incrby(String key, int increment);
 	
-	/**
-	 * 把当前key中存储的值加上一个浮点数increment
-	 * @param key
-	 * @param increment
-	 * @return 当前存储的值
-	 */
-	public float incrByFloat(String key, float increment);
+	public float incrbyfloat(String key, float increment);
 	
-	/** ——————————————decrement与increment相关操作结束—————————————— */
+	public String get(String key);
+	
+	public void getbit();
+	
+	public void getrange();
+	
+	public void getset();
+	
+	public void mget();
+	
+	public void mset();
+	
+	public void msetnx();
+	
+	public void psetex();
+	
+	public boolean set(String key, Object value);
+	
+	public void setbit();
+	
+	public void setex();
+	
+	public void setnx();
+	
+	public void setrange();
+	
+	public void strlen();
 	
 	
+	/** Hash commands */
+	/* hdel,hexists,hget,hgetall,hincrby,hincrbyfloat,hkeys,hlen,hmget,hmset,hset
+	,hsetnx,hvals,hscan */
 	
-	/** ——————————————列表相关的操作—————————————— */
+	public void hdel();
+	
+	public void hexists();
+	
+	public void hget();
+	
+	public void hgetall();
+	
+	public void hincrby();
+	
+	public void hincrbyfloat();
+	
+	public void hkeys();
+	
+	public void hlen();
+	
+	public void hmget();
+	
+	public void hmset();
+	
+	public void hset();
+	
+	public void hsetnx();
+	
+	public void hvals();
+	
+	public void hscan();
+	
+	
+	/** List commands */
+	/* blpop,brpop,brpoplpush,lindex,linsert,llen,lpop,lpush,lpushx,lrange,lrem,lset
+	,ltrim,rpop,rpoplpush,rpush,rpushx */
+	
+	public void blpop();
+	
+	public void brpop();
+	
+	public void brpoplpush();
 	
 	public boolean lset(String listKey, int index, Object value);
 	
@@ -150,6 +173,222 @@ public interface DeerletRedisClient {
 	
 	public boolean ltrim(String listKey, int start, int stop);
 	
-	/** ——————————————列表相关操作结束—————————————— */
+	public void rpop();
+	
+	public void rpoplpush();
+	
+	public void rpush();
+	
+	public void rpushx();
+	
+	
+	/** Set commands */
+	/* sadd,scard,sdiff,sdiffstore,sinter,sinterstore,sismember,smembers,smove,spop
+	,srandmember,srem,sunion,sunionstore,sscan */
+	
+	public void sadd();
+	
+	public void scard();
+	
+	public void sdiff();
+	
+	public void sdiffstore();
+	
+	public void sinter();
+	
+	public void sinterstore();
+	
+	public void sismember();
+	
+	public void smembers();
+	
+	public void smove();
+	
+	public void spop();
+	
+	public void srandmember();
+	
+	public void srem();
+	
+	public void sunion();
+	
+	public void sunionstore();
+	
+	public void sscan();
+	
+	
+	/** SortedSet commands */
+	/* zadd,zcard,zcount,zincrby,zrange,zrangebyscore,zrank,zrem,zremrangebyrank
+	,zremrangebyscore,zrevrange,zrevrangebyscore,zrevrank,zscore,zunionstore,zinterstore
+	,zscan,zrangebylex,zlexcount,zremrangebylex */
+	
+	public void zadd();
+	
+	public void zcard();
+	
+	public void zcount();
+	
+	public void zincrby();
+	
+	public void zrange();
+	
+	public void zrangebyscore();
+	
+	public void zrank();
+	
+	public void zrem();
+	
+	public void zremrangebyrank();
+	
+	public void zremrangebyscore();
+	
+	public void zrevrange();
+	
+	public void zrevrangebyscore();
+	
+	public void zrevrank();
+	
+	public void zscore();
+	
+	public void zunionstore();
+	
+	public void zinterstore();
+	
+	public void zscan();
+	
+	public void zrangebylex();
+
+	public void zlexcount();
+	
+	public void zremrangebylex();
+	
+	
+	/** HyperLog commands */
+	/* pfadd,pfcount,pfmerge */
+	
+	public void pfadd();
+	
+	public void pfcount();
+	
+	public void pfmerge();
+	
+	/** Pub/Sub commands */
+	/* psubscribe,publish,pubsub,punsubscribe,subscribe,unsubscribe */
+	
+	public void psubscribe();
+	
+	public void publish();
+	
+	public void pubsub();
+	
+	public void punsubscribe();
+	
+	public void subscribe();
+	
+	public void unsubscribe();
+	
+	
+	/** Transaction commands */
+	/* discard,exec,multi,unwatch,watch */
+	
+	public void discard();
+	
+	public void exec();
+	
+	public void multi();
+	
+	public void unwatch();
+	
+	public void watch();
+	
+	
+	/** Script commands */
+	/* eval,evalsha,script_exists,script_flush,script_kill,script_load */
+	
+	public void eval();
+	
+	public void evalsha();
+	
+	public void scriptexists();
+	
+	public void scriptflush();
+	
+	public void scriptkill();
+	
+	public void scriptload();
+	
+	
+	/** Connection commands */
+	/* auth,echo,ping,quit,select */
+	
+	public void auth();
+	
+	public void echo();
+	
+	public void ping();
+	
+	public void quit();
+	
+	public void select();
+	
+	
+	/** Server commands */
+	/* bgrewriteaof,bgsave,client_getname,client_kill,client_list,client_setname
+	,config_get,config,resetstat,config_rewrite,config_set,dbsize,debug_object
+	,debug_segfault,flushall,flushdb,info,lastsave,monitor,psync,save,shutdown
+	,slaveof,showlog,sync,time */
+	
+	public boolean bgrewriteaof();
+	
+	public boolean bgsave();
+	
+	public void clientgetname();
+	
+	public void clientkill();
+	
+	public void clientlist();
+	
+	public void clientsetname();
+	
+	public void configget();
+	
+	public void config();
+	
+	public void resetstat();
+	
+	public void configrewrite();
+	
+	public void configset();
+	
+	public int dbsize();
+	
+	public void debugobject();
+	
+	public void debugsegfault();
+	
+	public boolean flushall();
+	
+	public boolean flushdb();
+	
+	public void info();
+	
+	public void lastsave();
+	
+	public void monitor();
+	
+	public void psync();
+	
+	public void save();
+	
+	public void shutdown();
+	
+	public void slaveof();
+	
+	public void showlog();
+	
+	public void sync();
+	
+	public void time();
+	
 	
 }

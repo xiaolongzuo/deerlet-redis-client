@@ -1,7 +1,7 @@
 package cn.zxl.deerlet.redis.client.command;
 
 import cn.zxl.deerlet.redis.client.connection.Connection;
-import cn.zxl.deerlet.redis.client.io.DeerletInputStream;
+import cn.zxl.deerlet.redis.client.io.MultibulkInputStream;
 import cn.zxl.deerlet.redis.client.util.ProtocolUtil;
 
 /**
@@ -18,8 +18,8 @@ public class BooleanResultCommand extends AbstractCommand<Boolean> {
 		super(connection, command);
 	}
 
-	protected Boolean receive(DeerletInputStream inputStream, Commands command, Object... arguments) throws Exception {
-		String response = inputStream.readLineWithoutR();
+	protected Boolean receive(MultibulkInputStream inputStream, Commands command, Object... arguments) throws Exception {
+		String response = inputStream.readLine();
 		if (ProtocolUtil.isOk(response)) {
 			return true;
 		} else {

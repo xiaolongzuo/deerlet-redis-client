@@ -17,7 +17,7 @@ import cn.zxl.deerlet.redis.client.factory.ConnectionFactory;
  *
  */
 public class ConnectionPoolImpl implements ConnectionPool {
-
+	
 	private static final int INIT_SIZE = 10;
 
 	private static final int MAX_SIZE = 100;

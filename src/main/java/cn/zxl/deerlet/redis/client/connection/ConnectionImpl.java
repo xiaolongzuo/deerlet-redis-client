@@ -6,8 +6,8 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
-import cn.zxl.deerlet.redis.client.io.DeerletInputStream;
-import cn.zxl.deerlet.redis.client.io.DeerletOutputStream;
+import cn.zxl.deerlet.redis.client.io.MultibulkInputStream;
+import cn.zxl.deerlet.redis.client.io.MultibulkOutputStream;
 
 /**
  * 
@@ -21,9 +21,9 @@ public class ConnectionImpl implements Connection {
 
 	private Socket socket = new Socket();
 
-	private DeerletOutputStream outputStream;
+	private MultibulkOutputStream outputStream;
 
-	private DeerletInputStream inputStream;
+	private MultibulkInputStream inputStream;
 
 	public ConnectionImpl(int port) throws IOException {
 		this(Inet4Address.getLocalHost(), port);
@@ -36,8 +36,8 @@ public class ConnectionImpl implements Connection {
 	public ConnectionImpl(String address, int port) throws IOException {
 		socket.setKeepAlive(true);
 		socket.connect(new InetSocketAddress(address, port));
-		outputStream = new DeerletOutputStream(socket.getOutputStream());
-		inputStream = new DeerletInputStream(socket.getInputStream());
+		outputStream = new MultibulkOutputStream(socket.getOutputStream());
+		inputStream = new MultibulkInputStream(socket.getInputStream());
 	}
 
 	@Override
@@ -55,12 +55,12 @@ public class ConnectionImpl implements Connection {
 	}
 
 	@Override
-	public DeerletOutputStream getOutputStream() {
+	public MultibulkOutputStream getOutputStream() {
 		return outputStream;
 	}
 
 	@Override
-	public DeerletInputStream getInputStream() {
+	public MultibulkInputStream getInputStream() {
 		return inputStream;
 	}
 

@@ -1,8 +1,14 @@
 package cn.zxl.deerlet.redis.client.command;
 
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
 import cn.zxl.deerlet.redis.client.connection.Connection;
-import cn.zxl.deerlet.redis.client.io.DeerletInputStream;
-import cn.zxl.deerlet.redis.client.io.DeerletOutputStream;
+import cn.zxl.deerlet.redis.client.io.MultibulkInputStream;
+import cn.zxl.deerlet.redis.client.io.MultibulkOutputStream;
+import cn.zxl.deerlet.redis.client.util.ProtocolUtil;
+import cn.zxl.deerlet.redis.client.util.TypeUtil;
 
 /**
  * 
@@ -13,8 +19,12 @@ import cn.zxl.deerlet.redis.client.io.DeerletOutputStream;
  *
  */
 public abstract class AbstractCommand<T> implements Command<T> {
+	
+	protected final Logger LOGGER = Logger.getLogger(getClass());
 
 	private static final String COMMAND_SEPARATOR = "_";
+	
+	private static final String SPACE = " ";
 	
 	private Connection connection;
 
@@ -42,8 +52,16 @@ public abstract class AbstractCommand<T> implements Command<T> {
 	public T execute(Object... arguments) {
 		T result = null;
 		try {
+			if (LOGGER.isInfoEnabled()) {
+				LOGGER.info("send command : " + command + " outputstream : " + connection.getOutputStream());
+			}
 			send(connection.getOutputStream(), command, arguments);
+			connection.getOutputStream().flush();
+			if (LOGGER.isInfoEnabled()) {
+				LOGGER.info("receive data , command : " + command + " inputstream : " + connection.getInputStream());
+			}
 			result = (T) receive(connection.getInputStream(), command, arguments);
+			connection.getInputStream().clear();
 		} catch (Exception e) {
 			throw new RuntimeException("command execute failed!", e);
 		}
@@ -55,25 +73,30 @@ public abstract class AbstractCommand<T> implements Command<T> {
 		return connection;
 	}
 
-	protected void send(DeerletOutputStream outputStream, Commands command, Object... arguments) throws Exception {
+	protected void send(MultibulkOutputStream outputStream, Commands command, Object... arguments) throws Exception {
+		String commandString = command.name();
 		if (command.name().indexOf(COMMAND_SEPARATOR) > 0) {
-			String[] commands = command.name().split(COMMAND_SEPARATOR);
-			outputStream.writeObject(commands[0]);
-			outputStream.writeSpace();
-			outputStream.writeObject(commands[1]);
-		} else {
-			outputStream.writeObject(command.name());
+			commandString = command.name().replace(COMMAND_SEPARATOR, SPACE);
 		}
-		if (arguments != null) {
-			for (int i = 0; i < arguments.length; i++) {
-				outputStream.writeSpace();
-				outputStream.writeObject(arguments[i]);
+		byte[][] argumentBytes = new byte[arguments.length][];
+		for (int i = 0; i < arguments.length; i++) {
+			if (arguments[i] instanceof byte[]) {
+				argumentBytes[i] = (byte[]) arguments[i];
+			} else if (List.class.isAssignableFrom(arguments[i].getClass())) {
+				List<?> list = (List<?>) arguments[i];
+				byte[][] extendArgumentBytes = new byte[arguments.length + list.size() - 1][];
+				System.arraycopy(argumentBytes, 0, extendArgumentBytes, 0, i);
+				for (int j = 0; j < list.size(); j++) {
+					extendArgumentBytes[i++] = TypeUtil.stringToBytes(list.get(j).toString());
+				}
+				argumentBytes = extendArgumentBytes;
+			} else {
+				argumentBytes[i] = TypeUtil.stringToBytes(arguments[i].toString());
 			}
 		}
-		outputStream.writeEnter();
-		outputStream.flush();
+		ProtocolUtil.sendCommand(outputStream, TypeUtil.stringToBytes(commandString) , argumentBytes);
 	}
 
-	protected abstract Object receive(DeerletInputStream inputStream, Commands command, Object... arguments) throws Exception;
+	protected abstract Object receive(MultibulkInputStream inputStream, Commands command, Object... arguments) throws Exception;
 
 }

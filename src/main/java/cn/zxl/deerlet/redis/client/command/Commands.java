@@ -56,5 +56,4 @@ public enum Commands {
 	,debug_segfault,flushall,flushdb,info,lastsave,monitor,psync,save,shutdown
 	,slaveof,showlog,sync,time
 	
-
 }

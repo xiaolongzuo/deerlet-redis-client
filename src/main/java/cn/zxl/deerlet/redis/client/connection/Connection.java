@@ -1,7 +1,7 @@
 package cn.zxl.deerlet.redis.client.connection;
 
-import cn.zxl.deerlet.redis.client.io.DeerletInputStream;
-import cn.zxl.deerlet.redis.client.io.DeerletOutputStream;
+import cn.zxl.deerlet.redis.client.io.MultibulkInputStream;
+import cn.zxl.deerlet.redis.client.io.MultibulkOutputStream;
 
 /**
  * 
@@ -13,9 +13,9 @@ import cn.zxl.deerlet.redis.client.io.DeerletOutputStream;
  */
 public interface Connection {
 
-	public DeerletOutputStream getOutputStream();
+	public MultibulkOutputStream getOutputStream();
 
-	public DeerletInputStream getInputStream();
+	public MultibulkInputStream getInputStream();
 
 	public boolean isClosed();
 

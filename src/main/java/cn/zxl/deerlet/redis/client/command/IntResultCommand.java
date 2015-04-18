@@ -4,7 +4,7 @@
 package cn.zxl.deerlet.redis.client.command;
 
 import cn.zxl.deerlet.redis.client.connection.Connection;
-import cn.zxl.deerlet.redis.client.io.DeerletInputStream;
+import cn.zxl.deerlet.redis.client.io.MultibulkInputStream;
 import cn.zxl.deerlet.redis.client.util.ProtocolUtil;
 
 /**
@@ -22,8 +22,8 @@ public class IntResultCommand extends AbstractCommand<Integer> {
 	}
 
 	@Override
-	protected Integer receive(DeerletInputStream inputStream, Commands command, Object... arguments) throws Exception {
-		String response = inputStream.readLineWithoutR();
+	protected Integer receive(MultibulkInputStream inputStream, Commands command, Object... arguments) throws Exception {
+		String response = inputStream.readLine();
 		if (ProtocolUtil.isIntResultOk(response)) {
 			return Integer.valueOf(ProtocolUtil.extractResult(response));
 		} else {
