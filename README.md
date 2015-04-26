@@ -60,3 +60,12 @@ initSize:可选，指定连接池初始连接数,默认为10<br/>
 maxSize:可选，指定连接池最大连接数,默认为100<br/>
 minIdleSize:可选，指定连接池最小空闲连接数,默认为10<br/>
 maxIdleSize:可选，指定连接池最大空闲连接数,默认为20<br/>
+
+## 目前支持的命令
+del,dump,exists,expire,expireat,keys,migrate,move,object,persist,pexpire<br/>
+,pexpireat,pttl,randomkey,rename,renamenx,restore,sort,ttl,type,scan<br/>
+,append,bitcount,bitop,decr,decrby,get,getbit,getrange,getset,incr,incrby<br/>
+,incrbyfloat,mget,mset,msetnx,psetex,set,setbit,setex,setnx,setrange,strlen<br/>
+,lindex,linsert,llen,lpop,lpush,lpushx,lrange,lrem,lset,ltrim<br/>
+,select,bgrewriteaof,bgsave,dbsize,flushall,flushdb<br/>
+正在陆续添加中...欢迎您来一起加入
