@@ -1,4 +1,4 @@
-package cn.zxl.deerlet.redis.client.connection;
+package cn.zxl.deerlet.redis.client.connection.impl;
 
 import java.io.IOException;
 import java.net.Inet4Address;
@@ -6,6 +6,8 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
+import cn.zxl.deerlet.redis.client.config.Server;
+import cn.zxl.deerlet.redis.client.connection.Connection;
 import cn.zxl.deerlet.redis.client.io.MultibulkInputStream;
 import cn.zxl.deerlet.redis.client.io.MultibulkOutputStream;
 
@@ -31,6 +33,10 @@ public class ConnectionImpl implements Connection {
 
 	public ConnectionImpl(InetAddress address, int port) throws IOException {
 		this(address.getHostAddress(), port);
+	}
+	
+	public ConnectionImpl(Server server) throws IOException {
+		this(server.getHost(), server.getPort());
 	}
 
 	public ConnectionImpl(String address, int port) throws IOException {

@@ -1,12 +1,14 @@
-package cn.zxl.deerlet.redis.client.connection.pool;
+package cn.zxl.deerlet.redis.client.connection.impl;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
+import cn.zxl.deerlet.redis.client.config.Server;
 import cn.zxl.deerlet.redis.client.connection.Connection;
-import cn.zxl.deerlet.redis.client.factory.ConnectionFactory;
+import cn.zxl.deerlet.redis.client.connection.ConnectionPool;
 
 /**
  * 
@@ -17,49 +19,31 @@ import cn.zxl.deerlet.redis.client.factory.ConnectionFactory;
  *
  */
 public class ConnectionPoolImpl implements ConnectionPool {
-	
-	private static final int INIT_SIZE = 10;
-
-	private static final int MAX_SIZE = 100;
-
-	private static final int MIN_IDLE_SIZE = 10;
-
-	private static final int MAX_IDLE_SIZE = 20;
 
 	private LinkedList<Connection> connectionPool;
 
 	private ReentrantLock lock = new ReentrantLock();
 
-	private Condition isHasConnectionReleased = lock.newCondition();
+	private Condition notEmpty = lock.newCondition();
 
-	private int maxSize = MAX_SIZE;
+	private int maxSize;
 
-	private int minIdleSize = MIN_IDLE_SIZE;
+	private int minIdleSize;
 
-	private int maxIdleSize = MAX_IDLE_SIZE;
+	private int maxIdleSize;
 
-	private int totalSize = 0;
+	private int totalSize;
 
-	public ConnectionPoolImpl() {
-		this(INIT_SIZE, MAX_SIZE, MIN_IDLE_SIZE, MAX_IDLE_SIZE);
-	}
+	private Server server;
 
-	public ConnectionPoolImpl(int initSize) {
-		this(initSize, MAX_SIZE, MIN_IDLE_SIZE, MAX_IDLE_SIZE);
-	}
-
-	public ConnectionPoolImpl(int initSize, int maxSize) {
-		this(initSize, maxSize, MIN_IDLE_SIZE, MAX_IDLE_SIZE);
-	}
-
-	public ConnectionPoolImpl(int initSize, int maxSize, int minIdleSize) {
-		this(initSize, maxSize, minIdleSize, MAX_IDLE_SIZE);
-	}
-
-	public ConnectionPoolImpl(int initSize, int maxSize, int minIdleSize, int maxIdleSize) {
+	public ConnectionPoolImpl(Server server,int initSize, int maxSize, int minIdleSize, int maxIdleSize) {
 		if (initSize < minIdleSize || maxSize < initSize || maxSize < minIdleSize || maxIdleSize < minIdleSize || maxSize < maxIdleSize) {
 			throw new IllegalArgumentException("must (initSize < minIdleSize) && (maxSize < initSize) && (maxSize < minIdleSize) && (maxIdleSize < minIdleSize) && (maxSize < maxIdleSize)");
 		}
+		if (server == null) {
+			throw new IllegalArgumentException("server can't be null!");
+		}
+		this.server = server;
 		connectionPool = new LinkedList<Connection>();
 		incrementPool(initSize);
 		this.maxSize = maxSize;
@@ -67,9 +51,6 @@ public class ConnectionPoolImpl implements ConnectionPool {
 		this.maxIdleSize = maxIdleSize;
 	}
 
-	/* (non-Javadoc)
-	 * @see cn.zxl.deerlet.redis.client.connection.pool.ConnectionPool#get()
-	 */
 	@Override
 	public Connection obtainConnection() {
 		extend();
@@ -88,7 +69,7 @@ public class ConnectionPoolImpl implements ConnectionPool {
 			lock.lock();
 			try {
 				try {
-					isHasConnectionReleased.await();
+					notEmpty.await();
 					if (connectionPool.size() > 0) {
 						connection = connectionPool.removeLast();
 					}
@@ -115,9 +96,6 @@ public class ConnectionPoolImpl implements ConnectionPool {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see cn.zxl.deerlet.redis.client.connection.pool.ConnectionPool#release(cn.zxl.deerlet.redis.client.connection.Connection)
-	 */
 	@Override
 	public void releaseConnection(Connection connection) {
 		if (!(connection instanceof ConnectionProxy)) {
@@ -126,7 +104,7 @@ public class ConnectionPoolImpl implements ConnectionPool {
 		lock.lock();
 		try {
 			connectionPool.add(connection);
-			isHasConnectionReleased.signal();
+			notEmpty.signal();
 		} finally {
 			lock.unlock();
 		}
@@ -152,9 +130,11 @@ public class ConnectionPoolImpl implements ConnectionPool {
 		lock.lock();
 		try {
 			for (int i = 0; i < number; i++) {
-				connectionPool.add(new ConnectionProxy(ConnectionFactory.getConnection(), this));
+				connectionPool.add(newConnection());
 				totalSize++;
 			}
+		} catch (IOException e) {
+			throw new RuntimeException(e);
 		} finally {
 			lock.unlock();
 		}
@@ -174,6 +154,10 @@ public class ConnectionPoolImpl implements ConnectionPool {
 		} finally {
 			lock.unlock();
 		}
+	}
+
+	private Connection newConnection() throws IOException {
+		return new ConnectionProxy(new ConnectionImpl(server), this);
 	}
 
 }

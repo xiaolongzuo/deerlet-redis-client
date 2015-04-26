@@ -6,7 +6,6 @@ package cn.zxl.deerlet.redis.client.command;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.zxl.deerlet.redis.client.connection.Connection;
 import cn.zxl.deerlet.redis.client.io.MultibulkInputStream;
 import cn.zxl.deerlet.redis.client.util.ProtocolUtil;
 
@@ -15,14 +14,6 @@ import cn.zxl.deerlet.redis.client.util.ProtocolUtil;
  *
  */
 public class ListResultCommand extends AbstractCommand<List<String>> {
-
-	/**
-	 * @param connection
-	 * @param command
-	 */
-	public ListResultCommand(Connection connection, Commands command) {
-		super(connection, command);
-	}
 
 	@Override
 	protected List<String> receive(MultibulkInputStream inputStream, Commands command, Object... arguments) throws Exception {
@@ -36,8 +27,16 @@ public class ListResultCommand extends AbstractCommand<List<String>> {
 					list.add(inputStream.readLine());
 				}
 			}
+		} else {
+			throw new RuntimeException(ProtocolUtil.extractResult(response));
 		}
 		return list;
+	}
+
+	@Override
+	public List<String> merge(List<String> current, List<String> next) {
+		current.addAll(next);
+		return current;
 	}
 
 }

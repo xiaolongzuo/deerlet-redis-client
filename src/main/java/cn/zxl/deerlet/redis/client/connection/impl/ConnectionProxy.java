@@ -1,6 +1,7 @@
-package cn.zxl.deerlet.redis.client.connection.pool;
+package cn.zxl.deerlet.redis.client.connection.impl;
 
 import cn.zxl.deerlet.redis.client.connection.Connection;
+import cn.zxl.deerlet.redis.client.connection.ConnectionPool;
 import cn.zxl.deerlet.redis.client.io.MultibulkInputStream;
 import cn.zxl.deerlet.redis.client.io.MultibulkOutputStream;
 
@@ -17,7 +18,7 @@ public class ConnectionProxy implements Connection {
 	private Connection connection;
 
 	private ConnectionPool connectionPool;
-
+	
 	public ConnectionProxy(Connection connection, ConnectionPool connectionPool) {
 		this.connection = connection;
 		this.connectionPool = connectionPool;

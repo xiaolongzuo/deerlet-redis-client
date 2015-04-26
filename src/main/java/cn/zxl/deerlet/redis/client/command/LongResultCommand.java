@@ -11,20 +11,20 @@ import cn.zxl.deerlet.redis.client.util.ProtocolUtil;
  * @author zuoxiaolong
  *
  */
-public class IntResultCommand extends AbstractCommand<Integer> {
+public class LongResultCommand extends AbstractCommand<Long> {
 
 	@Override
-	protected Integer receive(MultibulkInputStream inputStream, Commands command, Object... arguments) throws Exception {
+	protected Long receive(MultibulkInputStream inputStream, Commands command, Object... arguments) throws Exception {
 		String response = inputStream.readLine();
 		if (ProtocolUtil.isIntResultOk(response)) {
-			return Integer.valueOf(ProtocolUtil.extractResult(response));
+			return Long.valueOf(ProtocolUtil.extractResult(response));
 		} else {
 			throw new RuntimeException(ProtocolUtil.extractResult(response));
 		}
 	}
 
 	@Override
-	public Integer merge(Integer current, Integer next) {
+	public Long merge(Long current, Long next) {
 		return current + next;
 	}
 

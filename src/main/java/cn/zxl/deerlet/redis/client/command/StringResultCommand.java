@@ -1,6 +1,5 @@
 package cn.zxl.deerlet.redis.client.command;
 
-import cn.zxl.deerlet.redis.client.connection.Connection;
 import cn.zxl.deerlet.redis.client.io.MultibulkInputStream;
 import cn.zxl.deerlet.redis.client.util.ProtocolUtil;
 import cn.zxl.deerlet.redis.client.util.TypeUtil;
@@ -15,18 +14,23 @@ import cn.zxl.deerlet.redis.client.util.TypeUtil;
  */
 public class StringResultCommand extends AbstractCommand<String> {
 
-	public StringResultCommand(Connection connection, Commands command) {
-		super(connection, command);
-	}
-
 	@Override
 	protected String receive(MultibulkInputStream inputStream, Commands command, Object... arguments) throws Exception {
 		String response = inputStream.readLine();
 		String result = null;
-		if (ProtocolUtil.isStringLengthResultOk(response) && Integer.valueOf(ProtocolUtil.extractResult(response)) > 0) {
-			result = TypeUtil.bytesToString(inputStream.readLineBytes()); 
+		if (ProtocolUtil.isStringLengthResultOk(response)) {
+			if (Integer.valueOf(ProtocolUtil.extractResult(response)) > 0) {
+				result = TypeUtil.bytesToString(inputStream.readLineBytes());
+			}
+		} else {
+			throw new RuntimeException(ProtocolUtil.extractResult(response));
 		}
 		return result;
+	}
+
+	@Override
+	public String merge(String current, String next) {
+		throw new UnsupportedOperationException();
 	}
 
 }

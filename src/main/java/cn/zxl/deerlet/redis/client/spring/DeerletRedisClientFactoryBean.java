@@ -4,11 +4,11 @@
 package cn.zxl.deerlet.redis.client.spring;
 
 import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.InitializingBean;
 
 import cn.zxl.deerlet.redis.client.DeerletRedisClient;
 import cn.zxl.deerlet.redis.client.DeerletRedisClientImpl;
-import cn.zxl.deerlet.redis.client.connection.pool.ConnectionPool;
+import cn.zxl.deerlet.redis.client.config.ConfigurationFactory;
+import cn.zxl.deerlet.redis.client.connection.impl.ConnectionFactoryImpl;
 
 /**
  * 支持与spring的无缝集成
@@ -16,23 +16,14 @@ import cn.zxl.deerlet.redis.client.connection.pool.ConnectionPool;
  * @since 2015 2015年3月6日 下午11:43:51
  *
  */
-public class DeerletRedisClientFactoryBean implements FactoryBean<DeerletRedisClient> , InitializingBean {
+public class DeerletRedisClientFactoryBean implements FactoryBean<DeerletRedisClient> {
 	
-	private ConnectionPool connectionPool;
-	
-	/**
-	 * @param connectionPool the connectionPool to set
-	 */
-	public void setConnectionPool(ConnectionPool connectionPool) {
-		this.connectionPool = connectionPool;
-	}
-
 	/* (non-Javadoc)
 	 * @see org.springframework.beans.factory.FactoryBean#getObject()
 	 */
 	@Override
 	public DeerletRedisClient getObject() throws Exception {
-		return new DeerletRedisClientImpl(connectionPool);
+		return new DeerletRedisClientImpl(new ConnectionFactoryImpl(ConfigurationFactory.create().loadConfiguration()));
 	}
 
 	/* (non-Javadoc)
@@ -51,15 +42,4 @@ public class DeerletRedisClientFactoryBean implements FactoryBean<DeerletRedisCl
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-	 */
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		if (connectionPool == null) {
-			throw new IllegalArgumentException("connectionPool can't be null!");
-		}
-	}
-
-	
 }

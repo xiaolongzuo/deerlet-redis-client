@@ -11,20 +11,20 @@ import cn.zxl.deerlet.redis.client.util.ProtocolUtil;
  * @since 2015 2015年3月6日 下午11:36:42
  *
  */
-public class BooleanResultCommand extends AbstractCommand<Boolean> {
+public class TypesResultCommand extends AbstractCommand<Types> {
 
-	protected Boolean receive(MultibulkInputStream inputStream, Commands command, Object... arguments) throws Exception {
+	protected Types receive(MultibulkInputStream inputStream, Commands command, Object... arguments) throws Exception {
 		String response = inputStream.readLine();
 		if (ProtocolUtil.isOk(response)) {
-			return true;
+			return Types.valueOf(ProtocolUtil.extractResult(response));
 		} else {
 			throw new RuntimeException(ProtocolUtil.extractResult(response));
 		}
 	}
 
 	@Override
-	public Boolean merge(Boolean current, Boolean next) {
-		return current && next;
+	public Types merge(Types current, Types next) {
+		throw new UnsupportedOperationException();
 	}
 
 }

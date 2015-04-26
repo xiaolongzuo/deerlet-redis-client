@@ -26,39 +26,20 @@ public abstract class AbstractCommand<T> implements Command<T> {
 	
 	private static final String SPACE = " ";
 	
-	private Connection connection;
-
-	private Commands command;
-
-	public AbstractCommand(Connection connection) {
-		if (connection == null || connection.isClosed()) {
-			throw new IllegalStateException("connection is null or is closed!");
-		}
-		this.connection = connection;
-	}
-
-	public AbstractCommand(Connection connection, Commands command) {
-		if (connection == null || connection.isClosed()) {
-			throw new IllegalStateException("connection is null or is closed!");
-		}
-		if (command == null) {
-			throw new IllegalArgumentException("command can't be null!");
-		}
-		this.connection = connection;
-		this.command = command;
-	}
-
 	@SuppressWarnings("unchecked")
-	public T execute(Object... arguments) {
+	public T execute(Connection connection,Commands command, Object... arguments) {
+		if (connection == null || connection.isClosed()) {
+			throw new IllegalStateException("connection is null or is closed!");
+		}
 		T result = null;
 		try {
-			if (LOGGER.isInfoEnabled()) {
-				LOGGER.info("send command : " + command + " outputstream : " + connection.getOutputStream());
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("send command : " + command + " outputstream : " + connection.getOutputStream());
 			}
 			send(connection.getOutputStream(), command, arguments);
 			connection.getOutputStream().flush();
-			if (LOGGER.isInfoEnabled()) {
-				LOGGER.info("receive data , command : " + command + " inputstream : " + connection.getInputStream());
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("receive data , command : " + command + " inputstream : " + connection.getInputStream());
 			}
 			result = (T) receive(connection.getInputStream(), command, arguments);
 			connection.getInputStream().clear();
@@ -67,10 +48,6 @@ public abstract class AbstractCommand<T> implements Command<T> {
 		}
 		connection.close();
 		return result;
-	}
-
-	protected Connection getConnection() {
-		return connection;
 	}
 
 	protected void send(MultibulkOutputStream outputStream, Commands command, Object... arguments) throws Exception {
@@ -90,13 +67,21 @@ public abstract class AbstractCommand<T> implements Command<T> {
 					extendArgumentBytes[i++] = TypeUtil.stringToBytes(list.get(j).toString());
 				}
 				argumentBytes = extendArgumentBytes;
+			} else if (arguments[i].getClass().isArray()) {
+				Object[] array = (Object[]) arguments[i];
+				byte[][] extendArgumentBytes = new byte[arguments.length + array.length - 1][];
+				System.arraycopy(argumentBytes, 0, extendArgumentBytes, 0, i);
+				for (int j = 0; j < array.length; j++) {
+					extendArgumentBytes[i++] = TypeUtil.stringToBytes(array[j].toString());
+				}
+				argumentBytes = extendArgumentBytes;
 			} else {
 				argumentBytes[i] = TypeUtil.stringToBytes(arguments[i].toString());
 			}
 		}
 		ProtocolUtil.sendCommand(outputStream, TypeUtil.stringToBytes(commandString) , argumentBytes);
 	}
-
+	
 	protected abstract Object receive(MultibulkInputStream inputStream, Commands command, Object... arguments) throws Exception;
-
+	
 }

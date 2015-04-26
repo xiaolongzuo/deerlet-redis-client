@@ -13,6 +13,8 @@ import cn.zxl.deerlet.redis.client.io.MultibulkOutputStream;
  *
  */
 public abstract class ProtocolUtil {
+	
+	private static final int defaultNumber = 1;
 
 	private static final String trueResultPrefix = "+";
 
@@ -66,13 +68,21 @@ public abstract class ProtocolUtil {
 	public static boolean isArrayLengthResultOk(String response) {
 		return response != null && response.startsWith(arrayLengthResultPrefix);
 	}
-
+	
 	public static boolean intResultToBooleanResult(String response) {
-		return response != null && isIntResultOk(response) && Integer.valueOf(extractResult(response)) > 0;
+		return intResultToBooleanResult(defaultNumber, response);
 	}
 
+	public static boolean intResultToBooleanResult(int number, String response) {
+		return response != null && isIntResultOk(response) && intResultToBooleanResult(number, Integer.valueOf(extractResult(response)));
+	}
+	
 	public static boolean intResultToBooleanResult(int intResult) {
-		return intResult > 0;
+		return intResultToBooleanResult(defaultNumber, intResult);
+	}
+
+	public static boolean intResultToBooleanResult(int number, int intResult) {
+		return intResult >= number;
 	}
 
 	public static String extractResult(String response) {

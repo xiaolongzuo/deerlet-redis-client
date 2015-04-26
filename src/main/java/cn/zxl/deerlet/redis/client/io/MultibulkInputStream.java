@@ -68,8 +68,8 @@ public class MultibulkInputStream extends FilterInputStream {
 		}
 
 		final String reply = sb.toString();
-		if (LOGGER.isInfoEnabled()) {
-			LOGGER.info("read line : " + reply);
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("read line : " + reply);
 		}
 		if (reply.length() == 0) {
 			throw new IOException("It seems like server has closed the connection.");
@@ -79,13 +79,6 @@ public class MultibulkInputStream extends FilterInputStream {
 	}
 
 	public byte[] readLineBytes() throws IOException {
-
-		/*
-		 * This operation should only require one fill. In that typical case we
-		 * optimize allocation and copy of the byte array. In the edge case
-		 * where more than one fill is required then we take a slower path and
-		 * expand a byte array output stream as is necessary.
-		 */
 
 		ensureFill();
 
@@ -114,13 +107,6 @@ public class MultibulkInputStream extends FilterInputStream {
 		return line;
 	}
 
-	/**
-	 * Slow path in case a line of bytes cannot be read in one #fill()
-	 * operation. This is still faster than creating the StrinbBuilder, String,
-	 * then encoding as byte[] in Protocol, then decoding back into a String.
-	 * 
-	 * @throws IOException
-	 */
 	private byte[] readLineBytesSlowly() throws IOException {
 		ByteArrayOutputStream bout = null;
 		while (true) {
@@ -197,11 +183,6 @@ public class MultibulkInputStream extends FilterInputStream {
 		return length;
 	}
 
-	/**
-	 * This methods assumes there are required bytes to be read. If we cannot
-	 * read anymore bytes an exception is thrown to quickly ascertain that the
-	 * stream was smaller than expected.
-	 */
 	private void ensureFill() throws IOException {
 		if (count >= limit) {
 			try {
