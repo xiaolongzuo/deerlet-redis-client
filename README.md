@@ -52,6 +52,7 @@ System.out.println(deerletRedisClient.get("testKey"));//获取
 System.out.println(deerletRedisClient.dbSize());//查看大小
 deerletRedisClient.flushAll();//刷新
 System.out.println(deerletRedisClient.dbSize());//查看大小
+```
 
 ## deerlet.properties文件属性说明
 address:必选，格式为 host1:port1,host2:port2.... 。
