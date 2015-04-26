@@ -52,3 +52,10 @@ System.out.println(deerletRedisClient.get("testKey"));//获取
 System.out.println(deerletRedisClient.dbSize());//查看大小
 deerletRedisClient.flushAll();//刷新
 System.out.println(deerletRedisClient.dbSize());//查看大小
+
+## deerlet.properties文件属性说明
+address:必选，格式为 host1:port1,host2:port2.... 。
+initSize:可选，指定连接池初始连接数,默认为10
+maxSize:可选，指定连接池最大连接数,默认为100
+minIdleSize:可选，指定连接池最小空闲连接数,默认为10
+maxIdleSize:可选，指定连接池最大空闲连接数,默认为20
