@@ -9,6 +9,7 @@ import cn.zxl.deerlet.redis.client.connection.ConnectionFactory;
 import cn.zxl.deerlet.redis.client.connection.ConnectionPool;
 import cn.zxl.deerlet.redis.client.strategy.LoadBalanceStrategies;
 import cn.zxl.deerlet.redis.client.strategy.LoadBalanceStrategy;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -17,6 +18,8 @@ import cn.zxl.deerlet.redis.client.strategy.LoadBalanceStrategy;
  *
  */
 public class ConnectionFactoryImpl implements ConnectionFactory {
+
+	private static final Logger LOGGER = Logger.getLogger(ConnectionFactoryImpl.class);
 	
 	private LoadBalanceStrategy<ConnectionPool> loadBalanceStrategy;
 
@@ -33,7 +36,12 @@ public class ConnectionFactoryImpl implements ConnectionFactory {
 	 */
 	@Override
 	public Connection createConnection(String key) {
-		return loadBalanceStrategy.select(key).obtainConnection();
+		ConnectionPool connectionPool = loadBalanceStrategy.select(key);
+		Connection connection = connectionPool.obtainConnection();
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("choose server for key[" + key + "] ,connectionPool is [" + connectionPool + "] ,connection is [" + connection + "]");
+		}
+		return connection;
 	}
 	
 	public LoadBalanceStrategy<ConnectionPool> getLoadBalanceStrategy() {

@@ -1,16 +1,14 @@
 package cn.zxl.deerlet.redis.client;
 
-import java.io.UnsupportedEncodingException;
-import java.util.Date;
-import java.util.List;
-
-import junit.framework.Assert;
-
-import org.junit.Test;
-
 import cn.zxl.deerlet.redis.client.command.Cursor;
 import cn.zxl.deerlet.redis.client.command.ObjectSubcommands;
 import cn.zxl.deerlet.redis.client.command.Types;
+import junit.framework.Assert;
+import org.junit.Test;
+
+import java.io.UnsupportedEncodingException;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 
@@ -185,7 +183,7 @@ public class DeerletRedisClientKeyTest extends AbstractDeerletRedisClientTest {
 		Assert.assertTrue(deerletRedisClient.exists("testKey1"));
 		Assert.assertFalse(deerletRedisClient.exists("testKey"));
 	}
-	
+
 	@Test
 	public void testRenamenx() throws InterruptedException {
 		Assert.assertTrue(deerletRedisClient.set("testKey", "TestValue"));

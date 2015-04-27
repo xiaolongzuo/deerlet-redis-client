@@ -1,13 +1,8 @@
 package cn.zxl.deerlet.redis.client;
 
-import java.util.List;
+import cn.zxl.deerlet.redis.client.command.*;
 
-import cn.zxl.deerlet.redis.client.command.Bit;
-import cn.zxl.deerlet.redis.client.command.BitopOperations;
-import cn.zxl.deerlet.redis.client.command.Cursor;
-import cn.zxl.deerlet.redis.client.command.LInsertOptions;
-import cn.zxl.deerlet.redis.client.command.ObjectSubcommands;
-import cn.zxl.deerlet.redis.client.command.Types;
+import java.util.List;
 
 /**
  * 
@@ -26,7 +21,7 @@ public interface DeerletRedisClient {
 	 * pexpireat,pttl,randomkey,rename,renamenx,restore,sort,ttl,type,scan
 	 */
 
-	public int del(String key);
+	public int del(String... key);
 
 	public byte[] dump(String key);
 

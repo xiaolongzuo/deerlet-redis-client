@@ -3,6 +3,8 @@
  */
 package cn.zxl.deerlet.redis.client.strategy;
 
+import org.apache.log4j.Logger;
+
 import java.util.*;
 
 /**
@@ -14,6 +16,8 @@ import java.util.*;
  *
  */
 public class ConsistencyHashStrategy<T> implements LoadBalanceStrategy<T> {
+
+	private static final Logger LOGGER = Logger.getLogger(ConsistencyHashStrategy.class);
 	
 	private static final int DEFAULT_VIRTUAL_NUMBER = 4;
 	
@@ -35,10 +39,13 @@ public class ConsistencyHashStrategy<T> implements LoadBalanceStrategy<T> {
 		for (int i = 0; i < nodes.size(); i++) {
 			T node = nodes.get(i);
 			for (int j = 0; j < virtualNumber; j++) {
-				virtualNodeMap.put(hash(node.toString() + j), node);
+				virtualNodeMap.put(hash("node-" + i + "-virtual-" + j), node);
 			}
 		}
 		this.virtualNodeMap = virtualNodeMap;
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("virtualNodeMap is [" + virtualNodeMap + "]");
+		}
 		this.nodes = Collections.unmodifiableList(nodes);
 	} 
 	
@@ -48,11 +55,16 @@ public class ConsistencyHashStrategy<T> implements LoadBalanceStrategy<T> {
 		}
 		Long hash = hash(key);
 		SortedMap<Long, T> map = virtualNodeMap.tailMap(hash);
+		T result = null;
 		if (map.isEmpty()) {
-			return virtualNodeMap.get(virtualNodeMap.firstKey());
+			result = virtualNodeMap.get(virtualNodeMap.firstKey());
 		} else {
-			return virtualNodeMap.get(map.firstKey());
+			result = virtualNodeMap.get(map.firstKey());
 		}
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("key is [" + key + "],hashcode is [" + hash + "],result is [" + result + "]");
+		}
+		return result;
 	}
 	
 	private Long hash(String key) {

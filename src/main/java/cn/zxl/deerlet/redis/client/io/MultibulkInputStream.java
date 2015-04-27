@@ -69,7 +69,7 @@ public class MultibulkInputStream extends FilterInputStream {
 
 		final String reply = sb.toString();
 		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("read line : " + reply);
+			LOGGER.debug("read line [" + reply + "]");
 		}
 		if (reply.length() == 0) {
 			throw new IOException("It seems like server has closed the connection.");

@@ -34,12 +34,12 @@ public abstract class AbstractCommand<T> implements Command<T> {
 		T result = null;
 		try {
 			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("send command : " + command + " outputstream : " + connection.getOutputStream());
+				LOGGER.debug(getClass() + " send command : " + command + " outputstream : " + connection.getOutputStream());
 			}
 			send(connection.getOutputStream(), command, arguments);
 			connection.getOutputStream().flush();
 			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("receive data , command : " + command + " inputstream : " + connection.getInputStream());
+				LOGGER.debug(getClass() + " receive data , command : " + command + " inputstream : " + connection.getInputStream());
 			}
 			result = (T) receive(connection.getInputStream(), command, arguments);
 			connection.getInputStream().clear();
