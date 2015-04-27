@@ -1,16 +1,25 @@
 package cn.zxl.deerlet.redis.client;
 
-import cn.zxl.deerlet.redis.client.command.*;
-import cn.zxl.deerlet.redis.client.connection.Connection;
-import cn.zxl.deerlet.redis.client.connection.ConnectionFactory;
-import cn.zxl.deerlet.redis.client.connection.ConnectionPool;
-import cn.zxl.deerlet.redis.client.strategy.SimpleNodeStrategy;
-import cn.zxl.deerlet.redis.client.util.ProtocolUtil;
-import org.apache.log4j.Logger;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import cn.zxl.deerlet.redis.client.command.Bit;
+import cn.zxl.deerlet.redis.client.command.BitopOperations;
+import cn.zxl.deerlet.redis.client.command.BooleanResultCommand;
+import cn.zxl.deerlet.redis.client.command.Command;
+import cn.zxl.deerlet.redis.client.command.CommandCache;
+import cn.zxl.deerlet.redis.client.command.Commands;
+import cn.zxl.deerlet.redis.client.command.Cursor;
+import cn.zxl.deerlet.redis.client.command.CursorResultCommand;
+import cn.zxl.deerlet.redis.client.command.DefaultCursor;
+import cn.zxl.deerlet.redis.client.command.IntResultCommand;
+import cn.zxl.deerlet.redis.client.command.LInsertOptions;
+import cn.zxl.deerlet.redis.client.command.ListResultCommand;
+import cn.zxl.deerlet.redis.client.command.StringResultCommand;
+import cn.zxl.deerlet.redis.client.connection.ConnectionPool;
+import cn.zxl.deerlet.redis.client.strategy.LoadBalanceStrategy;
+import cn.zxl.deerlet.redis.client.strategy.SimpleNodeStrategy;
 
 /**
  * 客户端的默认实现，采用连接池管理连接。
@@ -18,52 +27,18 @@ import java.util.List;
  * @author zuoxiaolong
  * @since 2015 2015年3月6日 下午11:38:36
  */
-public class DeerletRedisClientImpl implements DeerletRedisClient {
+public class ClusterDeerletRedisClient extends AbstractDeerletRedisClient implements DeerletRedisClient {
 
-    protected final Logger LOGGER = Logger.getLogger(getClass());
-
-    private ConnectionFactory connectionFactory;
-
-    public DeerletRedisClientImpl(ConnectionFactory connectionFactory) {
-        this.connectionFactory = connectionFactory;
+    public ClusterDeerletRedisClient(LoadBalanceStrategy<ConnectionPool> strategy) {
+    	super(strategy);
     }
 
     protected int getServerSize() {
-        return connectionFactory.getLoadBalanceStrategy().getAll().size();
-    }
-
-    protected <T> T executeCommand(Class<? extends Command<T>> commandClass, Commands command, Object... arguments) {
-        Command<T> commandInstance = CommandCache.INSTANCE.get(commandClass);
-        T result = null;
-        List<ConnectionPool> connectionPools = connectionFactory.getLoadBalanceStrategy().getAll();
-        for (int i = 0; i < connectionPools.size(); i++) {
-            if (result == null) {
-                result = executeCommand(connectionPools.get(i).obtainConnection(), commandInstance, command, arguments);
-            } else {
-                result = commandInstance.merge(result, executeCommand(connectionPools.get(i).obtainConnection(), commandInstance, command, arguments));
-            }
-        }
-        return result;
-    }
-
-    protected <T> T executeCommand(String key, Class<? extends Command<T>> commandClass, Commands command, Object... arguments) {
-        Command<T> commandInstance = CommandCache.INSTANCE.get(commandClass);
-        return executeCommand(connectionFactory.createConnection(key), commandInstance, command, arguments);
-    }
-
-    protected <T> T executeCommand(Connection connection, Command<T> commandInstance, Commands command, Object... arguments) {
-        try {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("execute command[" + command + "],use connection :" + connection);
-            }
-            return commandInstance.execute(connection, command, arguments);
-        } catch (Exception e) {
-            throw new RuntimeException("init command class failed!", e);
-        }
+        return strategy.getAll().size();
     }
 
 	/* **************key************* */
-
+    
     @Override
     public int del(String... keys) {
         int result = 0;
@@ -74,72 +49,8 @@ public class DeerletRedisClientImpl implements DeerletRedisClient {
     }
 
     @Override
-    public byte[] dump(String key) {
-        return executeCommand(key, ByteArrayResultCommand.class, Commands.dump, key);
-    }
-
-    @Override
-    public boolean exists(String key) {
-        return ProtocolUtil.intResultToBooleanResult(executeCommand(key, IntResultCommand.class, Commands.exists, key));
-    }
-
-    @Override
-    public boolean expire(String key, int seconds) {
-        return ProtocolUtil.intResultToBooleanResult(executeCommand(key, IntResultCommand.class, Commands.expire, key, seconds));
-    }
-
-    @Override
-    public boolean expireat(String key, int time) {
-        return ProtocolUtil.intResultToBooleanResult(executeCommand(key, IntResultCommand.class, Commands.expireat, key, time));
-    }
-
-    @Override
     public List<String> keys(String pattern) {
         return executeCommand(ListResultCommand.class, Commands.keys, pattern);
-    }
-
-    @Override
-    public boolean migrate(String host, String port, String key, int dbNumber, long timeout) {
-        return executeCommand(key, BooleanResultCommand.class, Commands.migrate, host, port, key, dbNumber, timeout);
-    }
-
-    @Override
-    public boolean move(String key, int dbNumber) {
-        return ProtocolUtil.intResultToBooleanResult(executeCommand(key, IntResultCommand.class, Commands.move, key, dbNumber));
-    }
-
-    @Override
-    public Object object(ObjectSubcommands subcommand, String key) {
-        if (subcommand == ObjectSubcommands.encoding) {
-            return executeCommand(key, StringResultCommand.class, Commands.object, subcommand, key);
-        } else {
-            return executeCommand(key, IntResultCommand.class, Commands.object, subcommand, key);
-        }
-    }
-
-    @Override
-    public boolean persist(String key) {
-        return ProtocolUtil.intResultToBooleanResult(executeCommand(key, IntResultCommand.class, Commands.persist, key));
-    }
-
-    @Override
-    public boolean pexpire(String key, long milliseconds) {
-        return ProtocolUtil.intResultToBooleanResult(executeCommand(key, IntResultCommand.class, Commands.pexpire, key, milliseconds));
-    }
-
-    @Override
-    public boolean pexpireat(String key, long milliseconds) {
-        return ProtocolUtil.intResultToBooleanResult(executeCommand(key, IntResultCommand.class, Commands.pexpireat, key, milliseconds));
-    }
-
-    @Override
-    public long pttl(String key) {
-        return executeCommand(key, LongResultCommand.class, Commands.pttl, key);
-    }
-
-    @Override
-    public String randomkey() {
-        return executeCommand(null, StringResultCommand.class, Commands.randomkey);
     }
 
     @Override
@@ -156,32 +67,12 @@ public class DeerletRedisClientImpl implements DeerletRedisClient {
     }
 
     @Override
-    public boolean restore(String key, int ttl, byte[] serializedValue) {
-        return executeCommand(key, BooleanResultCommand.class, Commands.restore, new Object[]{key, ttl, serializedValue});
-    }
-
-    @Override
-    public List<String> sort(String key, Object... arguments) {
-        return executeCommand(key, ListResultCommand.class, Commands.sort, key, arguments);
-    }
-
-    @Override
-    public int ttl(String key) {
-        return executeCommand(key, IntResultCommand.class, Commands.ttl, key);
-    }
-
-    @Override
-    public Types type(String key) {
-        return executeCommand(key, TypesResultCommand.class, Commands.type, key);
-    }
-
-    @Override
     public Cursor scan(Cursor cursor, String pattern, Integer count) {
         if (cursor == null) {
             cursor = DefaultCursor.EMPTY_CURSOR;
         }
         List<Integer> cursorList = cursor.getCursorList();
-        List<ConnectionPool> connectionPools = connectionFactory.getLoadBalanceStrategy().getAll();
+        List<ConnectionPool> connectionPools = strategy.getAll();
         if (cursorList.size() != connectionPools.size() && cursor != DefaultCursor.EMPTY_CURSOR) {
             throw new IllegalArgumentException("cursorList.size() != connectionPools.size()!");
         }
@@ -213,76 +104,35 @@ public class DeerletRedisClientImpl implements DeerletRedisClient {
 	/* **************string**************** */
 
     @Override
-    public int append(String key, String value) {
-        return executeCommand(key, IntResultCommand.class, Commands.append, key, value);
-    }
-
-    @Override
-    public int bitcount(String key, Integer start, Integer stop) {
-        if (start == null && stop == null) {
-            return executeCommand(key, IntResultCommand.class, Commands.bitcount, key);
-        } else if (start != null && stop == null) {
-            return executeCommand(key, IntResultCommand.class, Commands.bitcount, key, start);
-        } else {
-            return executeCommand(key, IntResultCommand.class, Commands.bitcount, key, start, stop);
-        }
-    }
-
-    @Override
     public int bitop(BitopOperations operation, String destKey, String... keys) {
-
-        return executeCommand(destKey, IntResultCommand.class, Commands.bitop, operation, destKey, keys);
-    }
-
-    @Override
-    public int decr(String key) {
-        return executeCommand(key, IntResultCommand.class, Commands.decr, key);
-    }
-
-    @Override
-    public int decrby(String key, int decrement) {
-        return executeCommand(key, IntResultCommand.class, Commands.decrby, key, decrement);
-    }
-
-    @Override
-    public String get(String key) {
-        return executeCommand(key, StringResultCommand.class, Commands.get, key);
-    }
-
-    @Override
-    public int getbit(String key, int offset) {
-        return executeCommand(key, IntResultCommand.class, Commands.getbit, key, offset);
-    }
-
-    @Override
-    public String getrange(String key, Integer start, Integer stop) {
-        if (start == null && stop == null) {
-            return executeCommand(key, StringResultCommand.class, Commands.getrange, key);
-        } else if (start != null && stop == null) {
-            return executeCommand(key, StringResultCommand.class, Commands.getrange, key, start);
-        } else {
-            return executeCommand(key, StringResultCommand.class, Commands.getrange, key, start, stop);
-        }
-    }
-
-    @Override
-    public String getset(String key, String value) {
-        return executeCommand(key, StringResultCommand.class, Commands.getset, key, value);
-    }
-
-    @Override
-    public int incr(String key) {
-        return executeCommand(key, IntResultCommand.class, Commands.incr, key);
-    }
-
-    @Override
-    public int incrby(String key, int increment) {
-        return executeCommand(key, IntResultCommand.class, Commands.incrby, key, increment);
-    }
-
-    @Override
-    public float incrbyfloat(String key, float increment) {
-        return Float.valueOf(executeCommand(key, StringResultCommand.class, Commands.incrbyfloat, key, increment));
+    	int result = 0;
+    	if (operation != BitopOperations.not) {
+    		for (int i = 0; i < keys.length; i++) {
+        		int count = strlen(keys[i]) * 8;
+    			if (count > result) {
+    				result = count;
+    			}
+    		}
+		} else {
+			result = strlen(keys[0]) * 8;
+		}
+    	StringBuffer stringBuffer = new StringBuffer();
+    	for (int i = 0; i < result; i++) {
+    		int current = getbit(keys[0], i);
+    		if (operation != BitopOperations.not) {
+    			for (int j = 1; j < keys.length; j++) {
+        			current = operation.operate(current, getbit(keys[j], i));
+    			}
+			} else {
+				current = operation.operate(current, -1);
+			}
+    		stringBuffer.append(current);
+		}
+    	String bitString = stringBuffer.toString();
+    	for (int i = 0; i < bitString.length(); i++) {
+			setbit(destKey, i, Bit.create(Integer.valueOf(String.valueOf(bitString.charAt(i)))));
+		}
+    	return result / 8;
     }
 
     @Override
@@ -299,7 +149,7 @@ public class DeerletRedisClientImpl implements DeerletRedisClient {
         if (keys.length != values.length) {
             throw new IllegalArgumentException("keys.length must equals values.length");
         }
-        if (connectionFactory.getLoadBalanceStrategy() instanceof SimpleNodeStrategy<?>) {
+        if (strategy instanceof SimpleNodeStrategy<?>) {
             Object[] arguments = new Object[keys.length + values.length];
             for (int i = 0, index = 0; i < values.length; index++) {
                 arguments[i++] = keys[index];
@@ -337,41 +187,8 @@ public class DeerletRedisClientImpl implements DeerletRedisClient {
         return mset(keys, values);
     }
 
-    @Override
-    public boolean psetex(String key, long milliseconds, Object value) {
-        return executeCommand(key, BooleanResultCommand.class, Commands.psetex, key, milliseconds, value);
-    }
-
-    @Override
-    public boolean set(String key, Object value) {
-        return executeCommand(key, BooleanResultCommand.class, Commands.set, key, value);
-    }
-
-    @Override
-    public Bit setbit(String key, int offset, Bit bit) {
-        return Bit.create(executeCommand(key, IntResultCommand.class, Commands.setbit, key, offset, bit));
-    }
-
-    @Override
-    public boolean setex(String key, int seconds, Object value) {
-        return executeCommand(key, BooleanResultCommand.class, Commands.setex, key, seconds, value);
-    }
-
-    @Override
-    public boolean setnx(String key, Object value) {
-        return ProtocolUtil.intResultToBooleanResult(executeCommand(key, IntResultCommand.class, Commands.setnx, key, value));
-    }
-
-    @Override
-    public int setrange(String key, int offset, Object value) {
-        return executeCommand(key, IntResultCommand.class, Commands.setrange, key, offset, value);
-    }
-
-    @Override
-    public int strlen(String key) {
-        return executeCommand(key, IntResultCommand.class, Commands.strlen, key);
-    }
-
+    /* ************* Hash commands *********************** */
+    
     @Override
     public void hdel() {
         // TODO Auto-generated method stub
@@ -520,6 +337,8 @@ public class DeerletRedisClientImpl implements DeerletRedisClient {
         // TODO Auto-generated method stub
 
     }
+    
+    /* **************** List commands **************** */
 
     /*
      * (non-Javadoc)
@@ -648,6 +467,7 @@ public class DeerletRedisClientImpl implements DeerletRedisClient {
 
     }
 
+    /* ************** Set commands ******************** */
     /*
      * (non-Javadoc)
      *
@@ -813,6 +633,8 @@ public class DeerletRedisClientImpl implements DeerletRedisClient {
 
     }
 
+    /* *************** SortedSet commands *************** */
+    
     /*
      * (non-Javadoc)
      *
@@ -1033,6 +855,8 @@ public class DeerletRedisClientImpl implements DeerletRedisClient {
 
     }
 
+    /* ***************** HyperLog commands ************** */
+    
     /*
      * (non-Javadoc)
      *
@@ -1066,6 +890,8 @@ public class DeerletRedisClientImpl implements DeerletRedisClient {
 
     }
 
+    /* ***************** Pub/Sub commands **************** */
+    
     /*
      * (non-Javadoc)
      *
@@ -1132,6 +958,8 @@ public class DeerletRedisClientImpl implements DeerletRedisClient {
 
     }
 
+    /* *************** Transaction commands **************** */
+    
     /*
      * (non-Javadoc)
      *
@@ -1187,6 +1015,7 @@ public class DeerletRedisClientImpl implements DeerletRedisClient {
 
     }
 
+    /*  ****************** Script commands ****************** */
     /*
      * (non-Javadoc)
      *
@@ -1253,6 +1082,8 @@ public class DeerletRedisClientImpl implements DeerletRedisClient {
 
     }
 
+    /* **************Connection commands **************** */
+    
     /*
      * (non-Javadoc)
      *
@@ -1306,6 +1137,8 @@ public class DeerletRedisClientImpl implements DeerletRedisClient {
     public boolean select(int index) {
         return executeCommand(BooleanResultCommand.class, Commands.select, index);
     }
+    
+    /* ******************** Server commands ******************* */
 
     @Override
     public boolean bgsave() {

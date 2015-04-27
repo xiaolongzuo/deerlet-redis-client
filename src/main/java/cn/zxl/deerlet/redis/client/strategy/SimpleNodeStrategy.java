@@ -28,7 +28,6 @@ public class SimpleNodeStrategy<T> implements LoadBalanceStrategy<T> {
 		this.nodes = Collections.unmodifiableList(nodes);
 	}
 	
-
 	/* (non-Javadoc)
 	 * @see cn.zxl.deerlet.redis.client.config.LoadBalanceStrategy#select(java.lang.String)
 	 */

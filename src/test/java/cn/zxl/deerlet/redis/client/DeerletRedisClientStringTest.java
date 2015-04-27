@@ -50,25 +50,25 @@ public class DeerletRedisClientStringTest extends AbstractDeerletRedisClientTest
 		deerletRedisClient.setbit("testKey2", 2, Bit.one);
 		deerletRedisClient.setbit("testKey2", 3, Bit.one);
 		
-		deerletRedisClient.bitop(BitopOperations.and, "testKey", "testKey1", "testKey2");
+		Assert.assertEquals(1, deerletRedisClient.bitop(BitopOperations.and, "testKey", "testKey1", "testKey2"));
 		Assert.assertEquals(0, deerletRedisClient.getbit("testKey", 0));
 		Assert.assertEquals(1, deerletRedisClient.getbit("testKey", 1));
 		Assert.assertEquals(0, deerletRedisClient.getbit("testKey", 2));
 		Assert.assertEquals(1, deerletRedisClient.getbit("testKey", 3));
 		
-		deerletRedisClient.bitop(BitopOperations.not, "testKey", "testKey1");
+		Assert.assertEquals(1, deerletRedisClient.bitop(BitopOperations.not, "testKey", "testKey1"));
 		Assert.assertEquals(0, deerletRedisClient.getbit("testKey", 0));
 		Assert.assertEquals(0, deerletRedisClient.getbit("testKey", 1));
 		Assert.assertEquals(1, deerletRedisClient.getbit("testKey", 2));
 		Assert.assertEquals(0, deerletRedisClient.getbit("testKey", 3));
 		
-		deerletRedisClient.bitop(BitopOperations.or, "testKey", "testKey1", "testKey2");
+		Assert.assertEquals(1, deerletRedisClient.bitop(BitopOperations.or, "testKey", "testKey1", "testKey2"));
 		Assert.assertEquals(1, deerletRedisClient.getbit("testKey", 0));
 		Assert.assertEquals(1, deerletRedisClient.getbit("testKey", 1));
 		Assert.assertEquals(1, deerletRedisClient.getbit("testKey", 2));
 		Assert.assertEquals(1, deerletRedisClient.getbit("testKey", 3));
 		
-		deerletRedisClient.bitop(BitopOperations.xor, "testKey", "testKey1", "testKey2");
+		Assert.assertEquals(1, deerletRedisClient.bitop(BitopOperations.xor, "testKey", "testKey1", "testKey2"));
 		Assert.assertEquals(1, deerletRedisClient.getbit("testKey", 0));
 		Assert.assertEquals(0, deerletRedisClient.getbit("testKey", 1));
 		Assert.assertEquals(1, deerletRedisClient.getbit("testKey", 2));

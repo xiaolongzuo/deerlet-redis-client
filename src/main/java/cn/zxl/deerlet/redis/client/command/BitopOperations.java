@@ -13,5 +13,27 @@ package cn.zxl.deerlet.redis.client.command;
  */
 public enum BitopOperations {
 
-	and,or,not,xor
+	and {
+		@Override
+		public int operate(int i, int j) {
+			return i & j;
+		}
+	},or {
+		@Override
+		public int operate(int i, int j) {
+			return i | j;
+		}
+	},not {
+		@Override
+		public int operate(int i, int j) {
+			return 1 - i;
+		}
+	},xor {
+		@Override
+		public int operate(int i, int j) {
+			return i ^ j;
+		}
+	};
+	
+	public abstract int operate(int i, int j);
 }

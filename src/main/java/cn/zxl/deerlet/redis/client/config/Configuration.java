@@ -15,6 +15,8 @@ import java.util.Properties;
  *
  */
 public class Configuration {
+	
+	private static final String DEFAULT_CONFIG_FILE = "deerlet.properties";
 
 	private String address;
 	
@@ -27,6 +29,9 @@ public class Configuration {
 	private Properties properties;
 	
 	public Configuration(String configFile) {
+		if (configFile == null) {
+			configFile = DEFAULT_CONFIG_FILE;
+		}
 		this.configFile = configFile;
 		reload();
 	}
