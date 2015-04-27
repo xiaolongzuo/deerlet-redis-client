@@ -11,7 +11,9 @@ import cn.zxl.deerlet.redis.client.strategy.LoadBalanceStrategies;
 import cn.zxl.deerlet.redis.client.strategy.LoadBalanceStrategy;
 
 /**
+ *
  * @author zuoxiaolong
+ * @since 2015 2015年3月6日 下午11:36:42
  *
  */
 public class ConnectionFactoryImpl implements ConnectionFactory {

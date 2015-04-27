@@ -3,16 +3,20 @@
  */
 package cn.zxl.deerlet.redis.client.strategy;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import cn.zxl.deerlet.redis.client.config.Configuration;
 import cn.zxl.deerlet.redis.client.config.Server;
 import cn.zxl.deerlet.redis.client.connection.ConnectionPool;
 import cn.zxl.deerlet.redis.client.connection.impl.ConnectionPoolImpl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
+ *
+ * 策略的静态工厂类
+ *
  * @author zuoxiaolong
+ * @since 2015 2015年3月6日 下午11:43:51
  *
  */
 public abstract class LoadBalanceStrategies {

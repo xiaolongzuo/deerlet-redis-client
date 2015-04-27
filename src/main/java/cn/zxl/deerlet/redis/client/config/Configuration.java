@@ -8,7 +8,7 @@ import java.util.Properties;
 
 /**
  * 
- * 连接工厂类。该类读取默认位置的配置文件。
+ * 该类默认加载classpath下的deerlet.properties文件。可以自己指定文件路径，只能基于classpath。
  *
  * @author zuoxiaolong
  * @since 2015 2015年3月6日 下午11:42:44

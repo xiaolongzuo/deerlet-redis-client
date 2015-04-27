@@ -7,7 +7,11 @@ import java.util.Collections;
 import java.util.List;
 
 /**
+ *
+ * 单点的实现
+ *
  * @author zuoxiaolong
+ * @since 2015 2015年3月6日 下午11:43:51
  *
  */
 public class SimpleNodeStrategy<T> implements LoadBalanceStrategy<T> {

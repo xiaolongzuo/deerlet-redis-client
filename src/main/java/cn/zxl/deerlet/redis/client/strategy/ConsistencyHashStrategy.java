@@ -3,14 +3,14 @@
  */
 package cn.zxl.deerlet.redis.client.strategy;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
-import java.util.UUID;
+import java.util.*;
 
 /**
+ *
+ * 一致性hash策略的实现
+ *
  * @author zuoxiaolong
+ * @since 2015 2015年3月6日 下午11:43:51
  *
  */
 public class ConsistencyHashStrategy<T> implements LoadBalanceStrategy<T> {

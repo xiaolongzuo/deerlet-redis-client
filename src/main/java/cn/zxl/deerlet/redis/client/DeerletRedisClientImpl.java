@@ -1,34 +1,16 @@
 package cn.zxl.deerlet.redis.client;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import org.apache.log4j.Logger;
-
-import cn.zxl.deerlet.redis.client.command.Bit;
-import cn.zxl.deerlet.redis.client.command.BitopOperations;
-import cn.zxl.deerlet.redis.client.command.BooleanResultCommand;
-import cn.zxl.deerlet.redis.client.command.ByteArrayResultCommand;
-import cn.zxl.deerlet.redis.client.command.Command;
-import cn.zxl.deerlet.redis.client.command.CommandCache;
-import cn.zxl.deerlet.redis.client.command.Commands;
-import cn.zxl.deerlet.redis.client.command.Cursor;
-import cn.zxl.deerlet.redis.client.command.CursorResultCommand;
-import cn.zxl.deerlet.redis.client.command.DefaultCursor;
-import cn.zxl.deerlet.redis.client.command.IntResultCommand;
-import cn.zxl.deerlet.redis.client.command.LInsertOptions;
-import cn.zxl.deerlet.redis.client.command.ListResultCommand;
-import cn.zxl.deerlet.redis.client.command.LongResultCommand;
-import cn.zxl.deerlet.redis.client.command.ObjectSubcommands;
-import cn.zxl.deerlet.redis.client.command.StringResultCommand;
-import cn.zxl.deerlet.redis.client.command.Types;
-import cn.zxl.deerlet.redis.client.command.TypesResultCommand;
+import cn.zxl.deerlet.redis.client.command.*;
 import cn.zxl.deerlet.redis.client.connection.Connection;
 import cn.zxl.deerlet.redis.client.connection.ConnectionFactory;
 import cn.zxl.deerlet.redis.client.connection.ConnectionPool;
 import cn.zxl.deerlet.redis.client.strategy.SimpleNodeStrategy;
 import cn.zxl.deerlet.redis.client.util.ProtocolUtil;
+import org.apache.log4j.Logger;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * 
@@ -384,11 +366,6 @@ public class DeerletRedisClientImpl implements DeerletRedisClient {
 		return executeCommand(key, IntResultCommand.class, Commands.strlen, key);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see cn.zxl.deerlet.redis.client.DeerletRedisClient#hdel()
-	 */
 	@Override
 	public void hdel() {
 		// TODO Auto-generated method stub

@@ -4,8 +4,13 @@
 package cn.zxl.deerlet.redis.client.config;
 
 /**
- * @author zuoxiaolong
  *
+ * Server接口的默认实现类
+ *
+ * @author zuoxiaolong
+ * @since 2015 2015年3月6日 下午11:36:42
+ *
+ * @see cn.zxl.deerlet.redis.client.config.Server
  */
 public class DefaultServer implements Server {
 

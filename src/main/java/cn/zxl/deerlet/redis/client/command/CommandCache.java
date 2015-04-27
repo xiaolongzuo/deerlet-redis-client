@@ -7,7 +7,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ *
+ * 缓存命令实例
+ *
  * @author zuoxiaolong
+ * @since 2015 2015年3月6日 下午11:36:42
  *
  */
 public enum CommandCache {

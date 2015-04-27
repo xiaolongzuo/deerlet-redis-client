@@ -3,18 +3,20 @@
  */
 package cn.zxl.deerlet.redis.client.spring;
 
-import org.springframework.beans.factory.FactoryBean;
-
 import cn.zxl.deerlet.redis.client.DeerletRedisClient;
 import cn.zxl.deerlet.redis.client.DeerletRedisClientImpl;
 import cn.zxl.deerlet.redis.client.config.ConfigurationFactory;
 import cn.zxl.deerlet.redis.client.connection.impl.ConnectionFactoryImpl;
+import org.springframework.beans.factory.FactoryBean;
 
 /**
  * 支持与spring的无缝集成
+ *
  * @author zuoxiaolong
  * @since 2015 2015年3月6日 下午11:43:51
  *
+ * @see cn.zxl.deerlet.redis.client.DeerletRedisClient
+ * @see cn.zxl.deerlet.redis.client.DeerletRedisClientImpl
  */
 public class DeerletRedisClientFactoryBean implements FactoryBean<DeerletRedisClient> {
 	

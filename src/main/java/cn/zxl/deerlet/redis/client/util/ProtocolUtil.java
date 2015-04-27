@@ -1,12 +1,12 @@
 package cn.zxl.deerlet.redis.client.util;
 
-import java.io.IOException;
-
 import cn.zxl.deerlet.redis.client.io.MultibulkOutputStream;
+
+import java.io.IOException;
 
 /**
  * 
- * 响应工具类
+ * 协议工具类，封装了一些响应解析的操作
  *
  * @author zuoxiaolong
  * @since 2015 2015年3月6日 下午11:44:47

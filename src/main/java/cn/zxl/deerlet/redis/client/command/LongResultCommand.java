@@ -7,7 +7,7 @@ import cn.zxl.deerlet.redis.client.io.MultibulkInputStream;
 import cn.zxl.deerlet.redis.client.util.ProtocolUtil;
 
 /**
- * 结果为int类型的命令的实现类
+ * 结果为long类型的命令的实现类
  * @author zuoxiaolong
  *
  */

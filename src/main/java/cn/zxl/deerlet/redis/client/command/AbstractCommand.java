@@ -1,18 +1,18 @@
 package cn.zxl.deerlet.redis.client.command;
 
-import java.util.List;
-
-import org.apache.log4j.Logger;
-
 import cn.zxl.deerlet.redis.client.connection.Connection;
 import cn.zxl.deerlet.redis.client.io.MultibulkInputStream;
 import cn.zxl.deerlet.redis.client.io.MultibulkOutputStream;
 import cn.zxl.deerlet.redis.client.util.ProtocolUtil;
 import cn.zxl.deerlet.redis.client.util.TypeUtil;
+import org.apache.log4j.Logger;
+
+import java.util.List;
 
 /**
  * 
- * 所有命令实现类的抽象实现，其中封装了命令执行的抽象过程。 通常情况下，子类只需要实现receive()方法。也可以选择性的重写send方法。
+ * 所有命令实现类的抽象实现，其中封装了命令执行的抽象过程。
+ * 通常情况下，子类只需要实现receive()方法。也可以选择性的重写send方法。
  *
  * @author zuoxiaolong
  * @since 2015 2015年3月6日 下午11:34:16

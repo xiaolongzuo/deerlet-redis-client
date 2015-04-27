@@ -4,8 +4,13 @@
 package cn.zxl.deerlet.redis.client.config;
 
 /**
- * @author zuoxiaolong
  *
+ * 配置工厂，用于创建配置。
+ *
+ * @author zuoxiaolong
+ * @since 2015 2015年3月6日 下午11:36:42
+ *
+ * @see cn.zxl.deerlet.redis.client.config.Configuration
  */
 public class ConfigurationFactory {
 	
