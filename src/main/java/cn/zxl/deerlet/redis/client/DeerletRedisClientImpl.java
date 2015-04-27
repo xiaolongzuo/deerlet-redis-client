@@ -6,6 +6,7 @@ import cn.zxl.deerlet.redis.client.connection.ConnectionFactory;
 import cn.zxl.deerlet.redis.client.connection.ConnectionPool;
 import cn.zxl.deerlet.redis.client.strategy.SimpleNodeStrategy;
 import cn.zxl.deerlet.redis.client.util.ProtocolUtil;
+
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -367,9 +368,8 @@ public class DeerletRedisClientImpl implements DeerletRedisClient {
 	}
 
 	@Override
-	public void hdel() {
-		// TODO Auto-generated method stub
-
+	public int hdel(String key,String... fields) {
+		return executeCommand(key, IntResultCommand.class, Commands.hdel, key,fields);
 	}
 
 	/*
@@ -389,9 +389,8 @@ public class DeerletRedisClientImpl implements DeerletRedisClient {
 	 * @see cn.zxl.deerlet.redis.client.DeerletRedisClient#hget()
 	 */
 	@Override
-	public void hget() {
-		// TODO Auto-generated method stub
-
+	public String hget(String key,String field) {
+		return executeCommand(key, StringResultCommand.class, Commands.hget, key,field);
 	}
 
 	/*
@@ -477,9 +476,8 @@ public class DeerletRedisClientImpl implements DeerletRedisClient {
 	 * @see cn.zxl.deerlet.redis.client.DeerletRedisClient#hset()
 	 */
 	@Override
-	public void hset() {
-		// TODO Auto-generated method stub
-
+	public int hset(String key,String field,String value) {
+		return executeCommand(key, IntResultCommand.class, Commands.hset, key,field,value);
 	}
 
 	/*

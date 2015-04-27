@@ -124,12 +124,16 @@ public interface DeerletRedisClient {
 	 * hdel,hexists,hget,hgetall,hincrby,hincrbyfloat,hkeys,hlen,hmget,hmset,hset
 	 * ,hsetnx,hvals,hscan
 	 */
-
-	public void hdel();
+	/**
+	 * @param key 
+	 * @param fields 
+	 * @return 被成功移除的域的数量
+	 */
+	public int hdel(String key,String... fields);
 
 	public void hexists();
 
-	public void hget();
+	public String hget(String key,String field);
 
 	public void hgetall();
 
@@ -145,7 +149,7 @@ public interface DeerletRedisClient {
 
 	public void hmset();
 
-	public void hset();
+	public int hset(String key,String field,String value);
 
 	public void hsetnx();
 
