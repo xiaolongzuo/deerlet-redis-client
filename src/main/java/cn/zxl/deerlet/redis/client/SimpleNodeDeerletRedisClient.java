@@ -3,21 +3,13 @@
  */
 package cn.zxl.deerlet.redis.client;
 
+import cn.zxl.deerlet.redis.client.command.*;
+import cn.zxl.deerlet.redis.client.connection.ConnectionPool;
+import cn.zxl.deerlet.redis.client.strategy.LoadBalanceStrategy;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import cn.zxl.deerlet.redis.client.command.BitopOperations;
-import cn.zxl.deerlet.redis.client.command.BooleanResultCommand;
-import cn.zxl.deerlet.redis.client.command.Commands;
-import cn.zxl.deerlet.redis.client.command.Cursor;
-import cn.zxl.deerlet.redis.client.command.CursorResultCommand;
-import cn.zxl.deerlet.redis.client.command.DefaultCursor;
-import cn.zxl.deerlet.redis.client.command.IntResultCommand;
-import cn.zxl.deerlet.redis.client.command.LInsertOptions;
-import cn.zxl.deerlet.redis.client.command.ListResultCommand;
-import cn.zxl.deerlet.redis.client.connection.ConnectionPool;
-import cn.zxl.deerlet.redis.client.strategy.LoadBalanceStrategy;
 
 /**
  * @author zuoxiaolong
@@ -253,210 +245,26 @@ public class SimpleNodeDeerletRedisClient extends AbstractDeerletRedisClient {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see cn.zxl.deerlet.redis.client.DeerletRedisClient#blpop()
-	 */
-	@Override
-	public void blpop() {
-		// TODO Auto-generated method stub
+	/**************************** list *************************/
 
+	@Override
+	public List<String> blpop(String[] keys, int timeout) {
+		return executeCommand(null , ListResultCommand.class, Commands.blpop, keys , timeout);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see cn.zxl.deerlet.redis.client.DeerletRedisClient#brpop()
-	 */
 	@Override
-	public void brpop() {
-		// TODO Auto-generated method stub
-
+	public List<String> brpop(String[] keys, int timeout) {
+		return executeCommand(null , ListResultCommand.class, Commands.brpop, keys , timeout);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see cn.zxl.deerlet.redis.client.DeerletRedisClient#brpoplpush()
-	 */
 	@Override
-	public void brpoplpush() {
-		// TODO Auto-generated method stub
-
+	public List<String> brpoplpush(String sourceKey, String destKey, int timeout) {
+		return executeCommand(null , ListResultCommand.class, Commands.brpoplpush, sourceKey , destKey, timeout);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * cn.zxl.deerlet.redis.client.DeerletRedisClient#lset(java.lang.String,
-	 * int, java.lang.Object)
-	 */
 	@Override
-	public boolean lset(String listKey, int index, Object value) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * cn.zxl.deerlet.redis.client.DeerletRedisClient#lpush(java.lang.String,
-	 * java.lang.Object[])
-	 */
-	@Override
-	public int lpush(String listKey, Object... values) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * cn.zxl.deerlet.redis.client.DeerletRedisClient#lrange(java.lang.String,
-	 * int, int)
-	 */
-	@Override
-	public List<String> lrange(String listKey, int start, int stop) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * cn.zxl.deerlet.redis.client.DeerletRedisClient#llen(java.lang.String)
-	 */
-	@Override
-	public int llen(String listKey) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * cn.zxl.deerlet.redis.client.DeerletRedisClient#lpushx(java.lang.String,
-	 * java.lang.Object)
-	 */
-	@Override
-	public int lpushx(String listKey, Object value) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * cn.zxl.deerlet.redis.client.DeerletRedisClient#lpop(java.lang.String)
-	 */
-	@Override
-	public String lpop(String listKey) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * cn.zxl.deerlet.redis.client.DeerletRedisClient#lrem(java.lang.String,
-	 * int, java.lang.Object)
-	 */
-	@Override
-	public int lrem(String listKey, int count, Object value) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * cn.zxl.deerlet.redis.client.DeerletRedisClient#lindex(java.lang.String,
-	 * int)
-	 */
-	@Override
-	public String lindex(String listKey, int index) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * cn.zxl.deerlet.redis.client.DeerletRedisClient#linsert(java.lang.String,
-	 * cn.zxl.deerlet.redis.client.command.LInsertOptions, java.lang.Object,
-	 * java.lang.Object)
-	 */
-	@Override
-	public int linsert(String listKey, LInsertOptions option, Object pivot, Object value) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * cn.zxl.deerlet.redis.client.DeerletRedisClient#ltrim(java.lang.String,
-	 * int, int)
-	 */
-	@Override
-	public boolean ltrim(String listKey, int start, int stop) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see cn.zxl.deerlet.redis.client.DeerletRedisClient#rpop()
-	 */
-	@Override
-	public void rpop() {
-		// TODO Auto-generated method stub
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see cn.zxl.deerlet.redis.client.DeerletRedisClient#rpoplpush()
-	 */
-	@Override
-	public void rpoplpush() {
-		// TODO Auto-generated method stub
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see cn.zxl.deerlet.redis.client.DeerletRedisClient#rpush()
-	 */
-	@Override
-	public void rpush() {
-		// TODO Auto-generated method stub
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see cn.zxl.deerlet.redis.client.DeerletRedisClient#rpushx()
-	 */
-	@Override
-	public void rpushx() {
-		// TODO Auto-generated method stub
-
+	public String rpoplpush(String sourceKey, String destKey) {
+		return executeCommand(null, StringResultCommand.class, Commands.rpoplpush, sourceKey, destKey);
 	}
 
 	/*
@@ -844,37 +652,16 @@ public class SimpleNodeDeerletRedisClient extends AbstractDeerletRedisClient {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see cn.zxl.deerlet.redis.client.DeerletRedisClient#pfadd()
-	 */
-	@Override
-	public void pfadd() {
-		// TODO Auto-generated method stub
+	/* ***************** HyperLog commands ************** */
 
+	@Override
+	public int pfcount(String... keys) {
+		return executeCommand(null, IntResultCommand.class , Commands.pfcount, keys);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see cn.zxl.deerlet.redis.client.DeerletRedisClient#pfcount()
-	 */
 	@Override
-	public void pfcount() {
-		// TODO Auto-generated method stub
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see cn.zxl.deerlet.redis.client.DeerletRedisClient#pfmerge()
-	 */
-	@Override
-	public void pfmerge() {
-		// TODO Auto-generated method stub
-
+	public boolean pfmerge(String destkey, String... sourcekeys) {
+		return executeCommand(null, BooleanResultCommand.class , Commands.pfmerge, destkey, sourcekeys);
 	}
 
 	/*

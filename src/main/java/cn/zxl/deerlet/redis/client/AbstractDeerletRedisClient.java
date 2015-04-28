@@ -3,27 +3,15 @@
  */
 package cn.zxl.deerlet.redis.client;
 
-import java.util.List;
-
-import org.apache.log4j.Logger;
-
-import cn.zxl.deerlet.redis.client.command.Bit;
-import cn.zxl.deerlet.redis.client.command.BooleanResultCommand;
-import cn.zxl.deerlet.redis.client.command.ByteArrayResultCommand;
-import cn.zxl.deerlet.redis.client.command.Command;
-import cn.zxl.deerlet.redis.client.command.CommandCache;
-import cn.zxl.deerlet.redis.client.command.Commands;
-import cn.zxl.deerlet.redis.client.command.IntResultCommand;
-import cn.zxl.deerlet.redis.client.command.ListResultCommand;
-import cn.zxl.deerlet.redis.client.command.LongResultCommand;
-import cn.zxl.deerlet.redis.client.command.ObjectSubcommands;
-import cn.zxl.deerlet.redis.client.command.StringResultCommand;
-import cn.zxl.deerlet.redis.client.command.Types;
-import cn.zxl.deerlet.redis.client.command.TypesResultCommand;
+import cn.zxl.deerlet.redis.client.command.*;
 import cn.zxl.deerlet.redis.client.connection.Connection;
 import cn.zxl.deerlet.redis.client.connection.ConnectionPool;
 import cn.zxl.deerlet.redis.client.strategy.LoadBalanceStrategy;
 import cn.zxl.deerlet.redis.client.util.ProtocolUtil;
+import org.apache.log4j.Logger;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author zuoxiaolong
@@ -73,7 +61,7 @@ public abstract class AbstractDeerletRedisClient implements DeerletRedisClient {
         }
     }
     
-    /****************** key ******************/
+    /******************************** key ****************************/
     
     @Override
 	public byte[] dump(String key) {
@@ -263,4 +251,95 @@ public abstract class AbstractDeerletRedisClient implements DeerletRedisClient {
         return executeCommand(key, IntResultCommand.class, Commands.strlen, key);
     }
 
+    /***************************** hash ***************************/
+
+
+
+    /**************************** list ****************************/
+
+    @Override
+    public boolean lset(String listKey, int index, Object value) {
+        return executeCommand(listKey, BooleanResultCommand.class, Commands.lset, listKey, index, value);
+    }
+
+    @Override
+    public int lpush(String listKey, Object... values) {
+        return executeCommand(listKey, IntResultCommand.class, Commands.lpush, listKey, Arrays.asList(values));
+    }
+
+    @Override
+    public List<String> lrange(String listKey, int start, int stop) {
+        return executeCommand(listKey, ListResultCommand.class, Commands.lrange, listKey, start, stop);
+    }
+
+    @Override
+    public int llen(String listKey) {
+        return executeCommand(listKey, IntResultCommand.class, Commands.llen, listKey);
+    }
+
+    @Override
+    public int lpushx(String listKey, Object value) {
+        return executeCommand(listKey, IntResultCommand.class, Commands.lpushx, listKey, value);
+    }
+
+    @Override
+    public String lpop(String listKey) {
+        return executeCommand(listKey, StringResultCommand.class, Commands.lpop, listKey);
+    }
+
+    @Override
+    public int lrem(String listKey, int count, Object value) {
+        return executeCommand(listKey, IntResultCommand.class, Commands.lrem, listKey, count, value);
+    }
+
+    @Override
+    public String lindex(String listKey, int index) {
+        return executeCommand(listKey, StringResultCommand.class, Commands.lindex, listKey, index);
+    }
+
+    @Override
+    public int linsert(String listKey, LInsertOptions option, Object pivot, Object value) {
+        return executeCommand(listKey, IntResultCommand.class, Commands.linsert, listKey, option, pivot, value);
+    }
+
+    @Override
+    public boolean ltrim(String listKey, int start, int stop) {
+        return executeCommand(listKey, BooleanResultCommand.class, Commands.ltrim, listKey, start, stop);
+    }
+
+    @Override
+    public String rpop(String key) {
+        return executeCommand(key, StringResultCommand.class, Commands.rpop, key);
+    }
+
+    @Override
+    public int rpush(String key, Object... values) {
+        return executeCommand(key, IntResultCommand.class, Commands.rpush, key , values);
+    }
+
+    @Override
+    public int rpushx(String key, Object value) {
+        return executeCommand(key, IntResultCommand.class, Commands.rpushx, key , value);
+    }
+
+    /*****************************Set *****************************/
+
+    /*****************************Sorted Set *****************************/
+
+    /*****************************HyperLog *****************************/
+
+    @Override
+    public boolean pfadd(String key, Object[] elements) {
+        return ProtocolUtil.intResultToBooleanResult(executeCommand(key , IntResultCommand.class, Commands.pfadd, key ,elements));
+    }
+
+    /*****************************pub/sub *****************************/
+
+    /*****************************Transaction *****************************/
+
+    /*****************************Script *****************************/
+
+    /*****************************Connection *****************************/
+
+    /*****************************Server *****************************/
 }
