@@ -8,13 +8,15 @@ import java.util.Properties;
 
 /**
  * 
- * 连接工厂类。该类读取默认位置的配置文件。
+ * 该类默认加载classpath下的deerlet.properties文件。可以自己指定文件路径，只能基于classpath。
  *
  * @author zuoxiaolong
  * @since 2015 2015年3月6日 下午11:42:44
  *
  */
 public class Configuration {
+	
+	private static final String DEFAULT_CONFIG_FILE = "deerlet.properties";
 
 	private String address;
 	
@@ -27,6 +29,9 @@ public class Configuration {
 	private Properties properties;
 	
 	public Configuration(String configFile) {
+		if (configFile == null) {
+			configFile = DEFAULT_CONFIG_FILE;
+		}
 		this.configFile = configFile;
 		reload();
 	}

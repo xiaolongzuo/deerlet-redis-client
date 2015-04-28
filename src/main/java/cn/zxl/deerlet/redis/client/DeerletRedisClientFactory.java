@@ -1,7 +1,7 @@
 /**
  * 
  */
-package cn.zxl.deerlet.redis.client.strategy;
+package cn.zxl.deerlet.redis.client;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,12 +10,16 @@ import cn.zxl.deerlet.redis.client.config.Configuration;
 import cn.zxl.deerlet.redis.client.config.Server;
 import cn.zxl.deerlet.redis.client.connection.ConnectionPool;
 import cn.zxl.deerlet.redis.client.connection.impl.ConnectionPoolImpl;
+import cn.zxl.deerlet.redis.client.strategy.ConsistencyHashStrategy;
+import cn.zxl.deerlet.redis.client.strategy.SimpleNodeStrategy;
 
 /**
  * @author zuoxiaolong
  *
  */
-public abstract class LoadBalanceStrategies {
+public enum DeerletRedisClientFactory {
+	
+	INSTANCE;
 	
 	private static final int INIT_SIZE = 10;
 
@@ -32,12 +36,25 @@ public abstract class LoadBalanceStrategies {
 	private static final String MIN_IDLE_SIZE_PROPERTY = "minIdleSize";
 
 	private static final String MAX_IDLE_SIZE_PROPERTY = "maxIdleSize";
-
-	public static LoadBalanceStrategy<ConnectionPool> createLoadBalanceStrategy(Configuration configuration) {
-		return chooseLoadBalanceStrategy(createConnectionPools(configuration));
+	
+	public DeerletRedisClient createDeerletRedisClient() {
+		return createDeerletRedisClient(new Configuration(null));
 	}
 	
-	private static List<ConnectionPool> createConnectionPools(Configuration configuration) {
+	public DeerletRedisClient createDeerletRedisClient(String configFile) {
+		return createDeerletRedisClient(new Configuration(configFile));
+	}
+
+	public DeerletRedisClient createDeerletRedisClient(Configuration configuration) {
+		List<ConnectionPool> connectionPools = createConnectionPools(configuration);
+		if (connectionPools.size() == 1) {
+			return new SimpleNodeDeerletRedisClient(new SimpleNodeStrategy<ConnectionPool>(connectionPools));
+		} else {
+			return new ClusterDeerletRedisClient(new ConsistencyHashStrategy<ConnectionPool>(connectionPools));
+		}
+	}
+	
+	private final List<ConnectionPool> createConnectionPools(Configuration configuration) {
 		List<ConnectionPool> connectionPools = new ArrayList<ConnectionPool>();
 		
 		List<Server> servers = configuration.getServerList();
@@ -49,14 +66,6 @@ public abstract class LoadBalanceStrategies {
 			connectionPools.add(new ConnectionPoolImpl(servers.get(i), initSize, maxSize, minIdleSize, maxIdleSize));
 		}
 		return connectionPools;
-	}
-	
-	private static LoadBalanceStrategy<ConnectionPool> chooseLoadBalanceStrategy(List<ConnectionPool> connectionPools) {
-		if (connectionPools != null && connectionPools.size() == 1) {
-			return new SimpleNodeStrategy<ConnectionPool>(connectionPools);
-		} else {
-			return new ConsistencyHashStrategy<ConnectionPool>(connectionPools);
-		}
 	}
 	
 }

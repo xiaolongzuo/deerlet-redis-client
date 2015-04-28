@@ -1,17 +1,14 @@
+/**
+ * 
+ */
 package cn.zxl.deerlet.redis.client;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.log4j.Logger;
-
-import cn.zxl.deerlet.redis.client.command.Bit;
 import cn.zxl.deerlet.redis.client.command.BitopOperations;
 import cn.zxl.deerlet.redis.client.command.BooleanResultCommand;
-import cn.zxl.deerlet.redis.client.command.ByteArrayResultCommand;
-import cn.zxl.deerlet.redis.client.command.Command;
-import cn.zxl.deerlet.redis.client.command.CommandCache;
 import cn.zxl.deerlet.redis.client.command.Commands;
 import cn.zxl.deerlet.redis.client.command.Cursor;
 import cn.zxl.deerlet.redis.client.command.CursorResultCommand;
@@ -19,226 +16,56 @@ import cn.zxl.deerlet.redis.client.command.DefaultCursor;
 import cn.zxl.deerlet.redis.client.command.IntResultCommand;
 import cn.zxl.deerlet.redis.client.command.LInsertOptions;
 import cn.zxl.deerlet.redis.client.command.ListResultCommand;
-import cn.zxl.deerlet.redis.client.command.LongResultCommand;
-import cn.zxl.deerlet.redis.client.command.ObjectSubcommands;
-import cn.zxl.deerlet.redis.client.command.StringResultCommand;
-import cn.zxl.deerlet.redis.client.command.Types;
-import cn.zxl.deerlet.redis.client.command.TypesResultCommand;
-import cn.zxl.deerlet.redis.client.connection.Connection;
-import cn.zxl.deerlet.redis.client.connection.ConnectionFactory;
 import cn.zxl.deerlet.redis.client.connection.ConnectionPool;
-import cn.zxl.deerlet.redis.client.strategy.SimpleNodeStrategy;
-import cn.zxl.deerlet.redis.client.util.ProtocolUtil;
+import cn.zxl.deerlet.redis.client.strategy.LoadBalanceStrategy;
 
 /**
- * 
- * 客户端的默认实现，采用连接池管理连接。
- *
  * @author zuoxiaolong
- * @since 2015 2015年3月6日 下午11:38:36
  *
  */
-public class DeerletRedisClientImpl implements DeerletRedisClient {
-	
-	protected final Logger LOGGER = Logger.getLogger(getClass());
+public class SimpleNodeDeerletRedisClient extends AbstractDeerletRedisClient {
 
-	private ConnectionFactory connectionFactory;
-	
-	public DeerletRedisClientImpl(ConnectionFactory connectionFactory) {
-		this.connectionFactory = connectionFactory;
-	}
-	
-	protected int getServerSize() {
-		return connectionFactory.getLoadBalanceStrategy().getAll().size();
-	}
-
-	protected <T> T executeCommand(Class<? extends Command<T>> commandClass, Commands command, Object... arguments) {
-		Command<T> commandInstance = CommandCache.INSTANCE.get(commandClass);
-		T result = null;
-		List<ConnectionPool> connectionPools = connectionFactory.getLoadBalanceStrategy().getAll();
-		for (int i = 0; i < connectionPools.size(); i++) {
-			if (result == null) {
-				result = executeCommand(connectionPools.get(i).obtainConnection(), commandInstance, command, arguments);
-			} else {
-				result = commandInstance.merge(result, executeCommand(connectionPools.get(i).obtainConnection(), commandInstance, command, arguments));
-			}
-		}
-		return result;
-	}
-
-	protected <T> T executeCommand(String key, Class<? extends Command<T>> commandClass, Commands command, Object... arguments) {
-		Command<T> commandInstance = CommandCache.INSTANCE.get(commandClass);
-		return executeCommand(connectionFactory.createConnection(key), commandInstance, command, arguments);
-	}
-
-	protected <T> T executeCommand(Connection connection, Command<T> commandInstance, Commands command, Object... arguments) {
-		try {
-			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("execute command[" + command + "],use connection :" + connection);
-			}
-			return commandInstance.execute(connection, command, arguments);
-		} catch (Exception e) {
-			throw new RuntimeException("init command class failed!", e);
-		}
-	}
-	
-	/* **************key************* */
-
-	@Override
-	public int del(String key) {
-		return executeCommand(key, IntResultCommand.class, Commands.del, key);
+	public SimpleNodeDeerletRedisClient(LoadBalanceStrategy<ConnectionPool> strategy) {
+		super(strategy);
 	}
 
 	@Override
-	public byte[] dump(String key) {
-		return executeCommand(key, ByteArrayResultCommand.class, Commands.dump, key);
-	}
-
-	@Override
-	public boolean exists(String key) {
-		return ProtocolUtil.intResultToBooleanResult(executeCommand(key, IntResultCommand.class, Commands.exists, key));
-	}
-
-	@Override
-	public boolean expire(String key, int seconds) {
-		return ProtocolUtil.intResultToBooleanResult(executeCommand(key, IntResultCommand.class, Commands.expire, key, seconds));
-	}
-
-	@Override
-	public boolean expireat(String key, int time) {
-		return ProtocolUtil.intResultToBooleanResult(executeCommand(key, IntResultCommand.class, Commands.expireat, key, time));
+	public int del(String... keys) {
+		return executeCommand(null, IntResultCommand.class, Commands.del, Arrays.asList(keys).toArray());
 	}
 
 	@Override
 	public List<String> keys(String pattern) {
-		return executeCommand(ListResultCommand.class, Commands.keys, pattern);
-	}
-
-	@Override
-	public boolean migrate(String host, String port, String key, int dbNumber, long timeout) {
-		return executeCommand(key, BooleanResultCommand.class, Commands.migrate, host, port, key, dbNumber, timeout);
-	}
-
-	@Override
-	public boolean move(String key, int dbNumber) {
-		return ProtocolUtil.intResultToBooleanResult(executeCommand(key, IntResultCommand.class, Commands.move, key, dbNumber));
-	}
-
-	@Override
-	public Object object(ObjectSubcommands subcommand, String key) {
-		if (subcommand == ObjectSubcommands.encoding) {
-			return executeCommand(key, StringResultCommand.class, Commands.object, subcommand, key);
-		} else {
-			return executeCommand(key, IntResultCommand.class, Commands.object, subcommand, key);
-		}
-	}
-
-	@Override
-	public boolean persist(String key) {
-		return ProtocolUtil.intResultToBooleanResult(executeCommand(key, IntResultCommand.class, Commands.persist, key));
-	}
-
-	@Override
-	public boolean pexpire(String key, long milliseconds) {
-		return ProtocolUtil.intResultToBooleanResult(executeCommand(key, IntResultCommand.class, Commands.pexpire, key, milliseconds));
-	}
-
-	@Override
-	public boolean pexpireat(String key, long milliseconds) {
-		return ProtocolUtil.intResultToBooleanResult(executeCommand(key, IntResultCommand.class, Commands.pexpireat, key, milliseconds));
-	}
-
-	@Override
-	public long pttl(String key) {
-		return executeCommand(key, LongResultCommand.class, Commands.pttl, key);
-	}
-
-	@Override
-	public String randomkey() {
-		return executeCommand(null, StringResultCommand.class, Commands.randomkey);
+		return executeCommand(null, ListResultCommand.class, Commands.keys, pattern);
 	}
 
 	@Override
 	public boolean rename(String key, String newKey) {
-		return executeCommand(key, BooleanResultCommand.class, Commands.rename, key, newKey);
+		return executeCommand(null, BooleanResultCommand.class, Commands.rename, key, newKey);
 	}
 
 	@Override
 	public boolean renamenx(String key, String newKey) {
-		return ProtocolUtil.intResultToBooleanResult(executeCommand(key, IntResultCommand.class, Commands.renamenx, key, newKey));
-	}
-
-	@Override
-	public boolean restore(String key, int ttl, byte[] serializedValue) {
-		return executeCommand(key, BooleanResultCommand.class, Commands.restore, new Object[] { key, ttl, serializedValue });
-	}
-
-	@Override
-	public List<String> sort(String key, Object... arguments) {
-		return executeCommand(key, ListResultCommand.class, Commands.sort, key, arguments);
-	}
-
-	@Override
-	public int ttl(String key) {
-		return executeCommand(key, IntResultCommand.class, Commands.ttl, key);
-	}
-
-	@Override
-	public Types type(String key) {
-		return executeCommand(key, TypesResultCommand.class, Commands.type, key);
+		return executeCommand(null, BooleanResultCommand.class, Commands.renamenx, key, newKey);
 	}
 
 	@Override
 	public Cursor scan(Cursor cursor, String pattern, Integer count) {
-		if (cursor == null) {
-			cursor = DefaultCursor.EMPTY_CURSOR;
-		}
-		List<Integer> cursorList = cursor.getCursorList();
-		List<ConnectionPool> connectionPools = connectionFactory.getLoadBalanceStrategy().getAll();
-		if (cursorList.size() != connectionPools.size() && cursor != DefaultCursor.EMPTY_CURSOR) {
-			throw new IllegalArgumentException("cursorList.size() != connectionPools.size()!");
-		}
-		Command<Cursor> cursorResultCommand = CommandCache.INSTANCE.get(CursorResultCommand.class);
-		Cursor result = new DefaultCursor(new ArrayList<Integer>(), new ArrayList<String>());
-		for (int i = 0; i < connectionPools.size(); i++) {
-			List<Object> arguments = new ArrayList<Object>();
-			if (cursor == DefaultCursor.EMPTY_CURSOR) {
-				arguments.add(0);
-			} else if (cursorList.get(i) < 0) {
-				result = cursorResultCommand.merge(result, new DefaultCursor(Arrays.asList(-1), new ArrayList<String>()));
-				continue;
-			} else {
-				arguments.add(cursorList.get(i));
-			}
-			if (pattern != null) {
-				arguments.add("match");
-				arguments.add(pattern);
-			}
-			if (count != null) {
-				arguments.add("count");
-				arguments.add(count);
-			}
-			result = cursorResultCommand.merge(result, executeCommand(connectionPools.get(i).obtainConnection(), cursorResultCommand, Commands.scan, arguments.toArray()));
-		}
-		return result;
-	}
-
-	/* **************string**************** */
-
-	@Override
-	public int append(String key, String value) {
-		return executeCommand(key, IntResultCommand.class, Commands.append, key, value);
-	}
-
-	@Override
-	public int bitcount(String key, Integer start, Integer stop) {
-		if (start == null && stop == null) {
-			return executeCommand(key, IntResultCommand.class, Commands.bitcount, key);
-		} else if (start != null && stop == null) {
-			return executeCommand(key, IntResultCommand.class, Commands.bitcount, key, start);
+		List<Object> arguments = new ArrayList<Object>();
+		if (cursor == null || cursor == DefaultCursor.EMPTY_CURSOR || cursor.getCursorList() == null || cursor.getCursorList().size() == 0) {
+			arguments.add(0);
 		} else {
-			return executeCommand(key, IntResultCommand.class, Commands.bitcount, key, start, stop);
+			arguments.add(cursor.getCursorList().get(0));
 		}
+		if (pattern != null) {
+			arguments.add("match");
+			arguments.add(pattern);
+		}
+		if (count != null) {
+			arguments.add("count");
+			arguments.add(count);
+		}
+		return executeCommand(null, CursorResultCommand.class, Commands.scan, arguments.toArray());
 	}
 
 	@Override
@@ -247,148 +74,36 @@ public class DeerletRedisClientImpl implements DeerletRedisClient {
 	}
 
 	@Override
-	public int decr(String key) {
-		return executeCommand(key, IntResultCommand.class, Commands.decr, key);
-	}
-
-	@Override
-	public int decrby(String key, int decrement) {
-		return executeCommand(key, IntResultCommand.class, Commands.decrby, key, decrement);
-	}
-
-	@Override
-	public String get(String key) {
-		return executeCommand(key, StringResultCommand.class, Commands.get, key);
-	}
-
-	@Override
-	public int getbit(String key, int offset) {
-		return executeCommand(key, IntResultCommand.class, Commands.getbit, key, offset);
-	}
-
-	@Override
-	public String getrange(String key, Integer start, Integer stop) {
-		if (start == null && stop == null) {
-			return executeCommand(key, StringResultCommand.class, Commands.getrange, key);
-		} else if (start != null && stop == null) {
-			return executeCommand(key, StringResultCommand.class, Commands.getrange, key, start);
-		} else {
-			return executeCommand(key, StringResultCommand.class, Commands.getrange, key, start, stop);
-		}
-	}
-
-	@Override
-	public String getset(String key, String value) {
-		return executeCommand(key, StringResultCommand.class, Commands.getset, key, value);
-	}
-
-	@Override
-	public int incr(String key) {
-		return executeCommand(key, IntResultCommand.class, Commands.incr, key);
-	}
-
-	@Override
-	public int incrby(String key, int increment) {
-		return executeCommand(key, IntResultCommand.class, Commands.incrby, key, increment);
-	}
-
-	@Override
-	public float incrbyfloat(String key, float increment) {
-		return Float.valueOf(executeCommand(key, StringResultCommand.class, Commands.incrbyfloat, key, increment));
-	}
-
-	@Override
 	public List<String> mget(String... keys) {
-		List<String> result = new ArrayList<String>();
-		for (int i = 0; i < keys.length; i++) {
-			result.add(executeCommand(keys[i], StringResultCommand.class, Commands.get, keys[i]));
-		}
-		return result;
+		return executeCommand(null, ListResultCommand.class, Commands.mget, Arrays.asList(keys).toArray());
 	}
 
 	@Override
 	public boolean mset(String[] keys, Object... values) {
 		if (keys.length != values.length) {
-			throw new IllegalArgumentException("keys.length must equals values.length");
-		} 
-		if (connectionFactory.getLoadBalanceStrategy() instanceof SimpleNodeStrategy<?>) {
-			Object[] arguments = new Object[keys.length + values.length];
-			for (int i = 0 ,index = 0; i < values.length; index++) {
-				arguments[i++] = keys[index];
-				arguments[i++] = values[index];
-			}
-			return executeCommand(BooleanResultCommand.class, Commands.mset, arguments);
+			throw new IllegalArgumentException("keys.length != values.length!");
 		}
-		boolean result = true;
-		for (int i = 0; i < keys.length; i++) {
-			result &= executeCommand(keys[i], BooleanResultCommand.class, Commands.set, keys[i] ,values[i]);
-			if (!result) {
-				for (int j = i; j >= 0; j--) {
-					del(keys[j]);
-				}
-			}
+		Object[] arguments = new Object[keys.length + values.length];
+		for (int i = 0 ,index = 0; i < keys.length; i++) {
+			arguments[index++] = keys[i];
+			arguments[index++] = values[i];
 		}
-		return result;
+		return executeCommand(null, BooleanResultCommand.class, Commands.mset, arguments);
 	}
 
 	@Override
 	public boolean msetnx(String[] keys, Object... values) {
 		if (keys.length != values.length) {
-			throw new IllegalArgumentException("keys.length must equals values.length");
-		} 
-		boolean exists = false;
-		for (int i = 0; i < keys.length; i++) {
-			if (exists(keys[i])) {
-				exists = true;
-				break;
-			}
+			throw new IllegalArgumentException("keys.length != values.length!");
 		}
-		if (exists) {
-			return false;
+		Object[] arguments = new Object[keys.length + values.length];
+		for (int i = 0 ,index = 0; i < keys.length; i++) {
+			arguments[index++] = keys[i];
+			arguments[index++] = values[i];
 		}
-		return mset(keys, values);
+		return executeCommand(null, BooleanResultCommand.class, Commands.msetnx, arguments);
 	}
 
-	@Override
-	public boolean psetex(String key, long milliseconds, Object value) {
-		return executeCommand(key, BooleanResultCommand.class, Commands.psetex, key, milliseconds, value);
-	}
-
-	@Override
-	public boolean set(String key, Object value) {
-		return executeCommand(key, BooleanResultCommand.class, Commands.set, key, value);
-	}
-
-	@Override
-	public Bit setbit(String key, int offset, Bit bit) {
-		return Bit.create(executeCommand(key, IntResultCommand.class, Commands.setbit, key, offset, bit));
-	}
-
-	@Override
-	public boolean setex(String key, int seconds, Object value) {
-		return executeCommand(key, BooleanResultCommand.class, Commands.setex, key, seconds, value);
-	}
-
-	@Override
-	public boolean setnx(String key, Object value) {
-		return ProtocolUtil.intResultToBooleanResult(executeCommand(key, IntResultCommand.class, Commands.setnx, key, value));
-	}
-
-	@Override
-	public int setrange(String key, int offset, Object value) {
-		return executeCommand(key, IntResultCommand.class, Commands.setrange, key, offset, value);
-	}
-
-	@Override
-	public int strlen(String key) {
-		return executeCommand(key, IntResultCommand.class, Commands.strlen, key);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see cn.zxl.deerlet.redis.client.DeerletRedisClient#hdel()
-	 */
 	@Override
 	public void hdel() {
 		// TODO Auto-generated method stub
@@ -571,54 +286,133 @@ public class DeerletRedisClientImpl implements DeerletRedisClient {
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * cn.zxl.deerlet.redis.client.DeerletRedisClient#lset(java.lang.String,
+	 * int, java.lang.Object)
+	 */
 	@Override
 	public boolean lset(String listKey, int index, Object value) {
-		return executeCommand(listKey, BooleanResultCommand.class, Commands.lset, listKey, index, value);
+		// TODO Auto-generated method stub
+		return false;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * cn.zxl.deerlet.redis.client.DeerletRedisClient#lpush(java.lang.String,
+	 * java.lang.Object[])
+	 */
 	@Override
 	public int lpush(String listKey, Object... values) {
-		return executeCommand(listKey, IntResultCommand.class, Commands.lpush, listKey, Arrays.asList(values));
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * cn.zxl.deerlet.redis.client.DeerletRedisClient#lrange(java.lang.String,
+	 * int, int)
+	 */
 	@Override
 	public List<String> lrange(String listKey, int start, int stop) {
-		return executeCommand(listKey, ListResultCommand.class, Commands.lrange, listKey, start, stop);
+		// TODO Auto-generated method stub
+		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * cn.zxl.deerlet.redis.client.DeerletRedisClient#llen(java.lang.String)
+	 */
 	@Override
 	public int llen(String listKey) {
-		return executeCommand(listKey, IntResultCommand.class, Commands.llen, listKey);
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * cn.zxl.deerlet.redis.client.DeerletRedisClient#lpushx(java.lang.String,
+	 * java.lang.Object)
+	 */
 	@Override
 	public int lpushx(String listKey, Object value) {
-		return executeCommand(listKey, IntResultCommand.class, Commands.lpushx, listKey, value);
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * cn.zxl.deerlet.redis.client.DeerletRedisClient#lpop(java.lang.String)
+	 */
 	@Override
 	public String lpop(String listKey) {
-		return executeCommand(listKey, StringResultCommand.class, Commands.lpop, listKey);
+		// TODO Auto-generated method stub
+		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * cn.zxl.deerlet.redis.client.DeerletRedisClient#lrem(java.lang.String,
+	 * int, java.lang.Object)
+	 */
 	@Override
 	public int lrem(String listKey, int count, Object value) {
-		return executeCommand(listKey, IntResultCommand.class, Commands.lrem, listKey, count, value);
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * cn.zxl.deerlet.redis.client.DeerletRedisClient#lindex(java.lang.String,
+	 * int)
+	 */
 	@Override
 	public String lindex(String listKey, int index) {
-		return executeCommand(listKey, StringResultCommand.class, Commands.lindex, listKey, index);
+		// TODO Auto-generated method stub
+		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * cn.zxl.deerlet.redis.client.DeerletRedisClient#linsert(java.lang.String,
+	 * cn.zxl.deerlet.redis.client.command.LInsertOptions, java.lang.Object,
+	 * java.lang.Object)
+	 */
 	@Override
 	public int linsert(String listKey, LInsertOptions option, Object pivot, Object value) {
-		return executeCommand(listKey, IntResultCommand.class, Commands.linsert, listKey, option, pivot, value);
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * cn.zxl.deerlet.redis.client.DeerletRedisClient#ltrim(java.lang.String,
+	 * int, int)
+	 */
 	@Override
 	public boolean ltrim(String listKey, int start, int stop) {
-		return executeCommand(listKey, BooleanResultCommand.class, Commands.ltrim, listKey, start, stop);
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	/*
@@ -1317,21 +1111,34 @@ public class DeerletRedisClientImpl implements DeerletRedisClient {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see cn.zxl.deerlet.redis.client.DeerletRedisClient#select()
+	 * @see cn.zxl.deerlet.redis.client.DeerletRedisClient#select(int)
 	 */
 	@Override
 	public boolean select(int index) {
-		return executeCommand(BooleanResultCommand.class, Commands.select, index);
+		// TODO Auto-generated method stub
+		return false;
 	}
 
-	@Override
-	public boolean bgsave() {
-		return executeCommand(BooleanResultCommand.class, Commands.bgsave);
-	}
-
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see cn.zxl.deerlet.redis.client.DeerletRedisClient#bgrewriteaof()
+	 */
 	@Override
 	public boolean bgrewriteaof() {
-		return executeCommand(BooleanResultCommand.class, Commands.bgrewriteaof);
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see cn.zxl.deerlet.redis.client.DeerletRedisClient#bgsave()
+	 */
+	@Override
+	public boolean bgsave() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	/*
@@ -1433,9 +1240,15 @@ public class DeerletRedisClientImpl implements DeerletRedisClient {
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see cn.zxl.deerlet.redis.client.DeerletRedisClient#dbsize()
+	 */
 	@Override
 	public int dbsize() {
-		return executeCommand(IntResultCommand.class, Commands.dbsize);
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 	/*
@@ -1462,12 +1275,18 @@ public class DeerletRedisClientImpl implements DeerletRedisClient {
 
 	@Override
 	public boolean flushall() {
-		return executeCommand(BooleanResultCommand.class, Commands.flushall);
+		return executeCommand(null, BooleanResultCommand.class, Commands.flushall);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see cn.zxl.deerlet.redis.client.DeerletRedisClient#flushdb()
+	 */
 	@Override
 	public boolean flushdb() {
-		return executeCommand(BooleanResultCommand.class, Commands.flushdb);
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	/*

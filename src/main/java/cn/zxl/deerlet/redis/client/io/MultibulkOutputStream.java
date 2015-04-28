@@ -6,7 +6,7 @@ import java.io.OutputStream;
 
 /**
  * 
- * 为了方便写入操作的装饰类。
+ * 为了方便写入操作的装饰类，遵循multibulk协议。
  *
  * @author zuoxiaolong
  * @since 2015 2015年3月6日 下午11:43:51

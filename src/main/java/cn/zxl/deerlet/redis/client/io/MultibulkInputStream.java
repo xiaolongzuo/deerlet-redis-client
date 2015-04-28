@@ -1,15 +1,15 @@
 package cn.zxl.deerlet.redis.client.io;
 
+import org.apache.log4j.Logger;
+
 import java.io.ByteArrayOutputStream;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.log4j.Logger;
-
 /**
  * 
- * 为了方便读取操作的装饰类。
+ * 为了方便读取操作的装饰类，遵循multibulk协议。
  *
  * @author zuoxiaolong
  * @since 2015 2015年3月6日 下午11:43:51
@@ -69,7 +69,7 @@ public class MultibulkInputStream extends FilterInputStream {
 
 		final String reply = sb.toString();
 		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("read line : " + reply);
+			LOGGER.debug("read line [" + reply + "]");
 		}
 		if (reply.length() == 0) {
 			throw new IOException("It seems like server has closed the connection.");

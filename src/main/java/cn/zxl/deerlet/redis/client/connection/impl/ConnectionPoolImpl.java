@@ -1,14 +1,14 @@
 package cn.zxl.deerlet.redis.client.connection.impl;
 
+import cn.zxl.deerlet.redis.client.config.Server;
+import cn.zxl.deerlet.redis.client.connection.Connection;
+import cn.zxl.deerlet.redis.client.connection.ConnectionPool;
+
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
-
-import cn.zxl.deerlet.redis.client.config.Server;
-import cn.zxl.deerlet.redis.client.connection.Connection;
-import cn.zxl.deerlet.redis.client.connection.ConnectionPool;
 
 /**
  * 
@@ -68,15 +68,13 @@ public class ConnectionPoolImpl implements ConnectionPool {
 		while (connection == null) {
 			lock.lock();
 			try {
-				try {
-					notEmpty.await();
-					if (connectionPool.size() > 0) {
-						connection = connectionPool.removeLast();
-					}
-				} catch (InterruptedException e) {
-					throw new RuntimeException(e);
+				notEmpty.await();
+				if (connectionPool.size() > 0) {
+					connection = connectionPool.removeLast();
 				}
-			} finally {
+			} catch (InterruptedException e) {
+				throw new RuntimeException(e);
+			}finally {
 				lock.unlock();
 			}
 		}

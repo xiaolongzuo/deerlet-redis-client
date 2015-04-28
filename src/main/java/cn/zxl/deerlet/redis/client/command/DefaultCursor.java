@@ -7,7 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ *
+ * 游标默认的实现类
+ *
  * @author zuoxiaolong
+ * @since 2015 2015年3月6日 下午11:36:42
  *
  */
 public class DefaultCursor implements Cursor {

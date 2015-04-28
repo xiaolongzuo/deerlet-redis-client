@@ -3,15 +3,14 @@
  */
 package cn.zxl.deerlet.redis.client.jedis;
 
+import cn.zxl.deerlet.redis.client.AbstractDeerletRedisClientTest;
+import org.apache.log4j.Logger;
+import org.junit.Test;
+import redis.clients.jedis.Jedis;
+
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import org.apache.log4j.Logger;
-import org.junit.Test;
-
-import redis.clients.jedis.Jedis;
-import cn.zxl.deerlet.redis.client.AbstractDeerletRedisClientTest;
 
 /**
  * @author zuoxiaolong
