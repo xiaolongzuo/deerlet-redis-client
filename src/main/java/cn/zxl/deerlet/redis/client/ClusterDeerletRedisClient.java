@@ -1,13 +1,24 @@
 package cn.zxl.deerlet.redis.client;
 
-import cn.zxl.deerlet.redis.client.command.*;
-import cn.zxl.deerlet.redis.client.connection.ConnectionPool;
-import cn.zxl.deerlet.redis.client.strategy.LoadBalanceStrategy;
-import cn.zxl.deerlet.redis.client.strategy.SimpleNodeStrategy;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import cn.zxl.deerlet.redis.client.command.Bit;
+import cn.zxl.deerlet.redis.client.command.BitopOperations;
+import cn.zxl.deerlet.redis.client.command.BooleanResultCommand;
+import cn.zxl.deerlet.redis.client.command.Command;
+import cn.zxl.deerlet.redis.client.command.CommandCache;
+import cn.zxl.deerlet.redis.client.command.Commands;
+import cn.zxl.deerlet.redis.client.command.Cursor;
+import cn.zxl.deerlet.redis.client.command.CursorResultCommand;
+import cn.zxl.deerlet.redis.client.command.DefaultCursor;
+import cn.zxl.deerlet.redis.client.command.IntResultCommand;
+import cn.zxl.deerlet.redis.client.command.ListResultCommand;
+import cn.zxl.deerlet.redis.client.command.StringResultCommand;
+import cn.zxl.deerlet.redis.client.connection.ConnectionPool;
+import cn.zxl.deerlet.redis.client.strategy.LoadBalanceStrategy;
+import cn.zxl.deerlet.redis.client.strategy.SimpleNodeStrategy;
 
 /**
  * 客户端的默认实现，采用连接池管理连接。
@@ -762,7 +773,7 @@ public class ClusterDeerletRedisClient extends AbstractDeerletRedisClient {
 
     @Override
     public int pfcount(String... keys) {
-        return executeCommand(IntResultCommand.class , Commands.pfcount, keys);
+        return executeCommand(IntResultCommand.class , Commands.pfcount, Arrays.asList(keys).toArray());
     }
 
     @Override
