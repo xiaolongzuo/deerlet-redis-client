@@ -154,11 +154,11 @@ public interface DeerletRedisClient {
 	 * ,ltrim,rpop,rpoplpush,rpush,rpushx
 	 */
 
-	public void blpop();
+	public List<String> blpop(String[] keys, int timeout);
 
-	public void brpop();
+	public List<String> brpop(String[] keys, int timeout);
 
-	public void brpoplpush();
+	public List<String> brpoplpush(String sourceKey, String destKey, int timeout);
 
 	public boolean lset(String listKey, int index, Object value);
 
@@ -180,13 +180,13 @@ public interface DeerletRedisClient {
 
 	public boolean ltrim(String listKey, int start, int stop);
 
-	public void rpop();
+	public String rpop(String key);
 
-	public void rpoplpush();
+	public String rpoplpush(String sourceKey, String destKey);
 
-	public void rpush();
+	public int rpush(String key, Object... values);
 
-	public void rpushx();
+	public int rpushx(String key, Object value);
 
 	/** Set commands */
 	/*
@@ -274,11 +274,11 @@ public interface DeerletRedisClient {
 	/** HyperLog commands */
 	/* pfadd,pfcount,pfmerge */
 
-	public void pfadd();
+	public boolean pfadd(String key , Object[] elements);
 
-	public void pfcount();
+	public int pfcount(String... keys);
 
-	public void pfmerge();
+	public boolean pfmerge(String destkey ,String... sourcekeys);
 
 	/** Pub/Sub commands */
 	/* psubscribe,publish,pubsub,punsubscribe,subscribe,unsubscribe */
