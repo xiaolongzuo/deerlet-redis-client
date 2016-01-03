@@ -15,9 +15,9 @@ import java.util.List;
  */
 public interface Cursor {
 
-	public List<Integer> getCursorList();
+	List<Integer> getCursorList();
 	
-	public List<String> getResultList();
+	List<String> getResultList();
 	
 	
 }

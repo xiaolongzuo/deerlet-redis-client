@@ -31,8 +31,8 @@ public class DefaultCursor implements Cursor {
 	}
 	
 	/**
-	 * @param cursorList
-	 * @param resultList
+	 * @param cursorList the cursorList
+	 * @param resultList the resultList
 	 */
 	public DefaultCursor(List<Integer> cursorList, List<String> resultList) {
 		super();

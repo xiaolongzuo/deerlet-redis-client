@@ -35,9 +35,6 @@ public abstract class AbstractDeerletRedisClient implements DeerletRedisClient {
 	
 	protected LoadBalanceStrategy<ConnectionPool> strategy;
 
-	/**
-	 * 
-	 */
 	public AbstractDeerletRedisClient(LoadBalanceStrategy<ConnectionPool> strategy) {
 		super();
 		this.strategy = strategy;
@@ -73,7 +70,7 @@ public abstract class AbstractDeerletRedisClient implements DeerletRedisClient {
         }
     }
     
-    /****************** key ******************/
+    /* ***************** key ***************** */
     
     @Override
 	public byte[] dump(String key) {
@@ -159,7 +156,7 @@ public abstract class AbstractDeerletRedisClient implements DeerletRedisClient {
         return executeCommand(key, TypesResultCommand.class, Commands.type, key);
     }
     
-    /***************string**************** */
+    /* **************string**************** */
 
     @Override
     public int append(String key, String value) {
