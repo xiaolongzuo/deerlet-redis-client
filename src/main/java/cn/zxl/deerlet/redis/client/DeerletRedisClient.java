@@ -14,7 +14,7 @@ import java.util.List;
  */
 public interface DeerletRedisClient {
 	
-	/** Key commands */
+	/* ------------ Key commands ------------ */
 	/*
 	 * del,dump,exists,expire,expireat,keys,migrate,move,object,persist
 	 * ,pexpire,
@@ -63,7 +63,7 @@ public interface DeerletRedisClient {
 
 	public Cursor scan(Cursor cursor, String pattern, Integer count);
 
-	/** String commands */
+	/* ------------ String commands ------------ */
 	/*
 	 * append,bitcount,bitop,decr,decrby,get,getbit,getrange,getset,incr,incrby
 	 * ,
@@ -114,7 +114,7 @@ public interface DeerletRedisClient {
 
 	public int strlen(String key);
 
-	/** Hash commands */
+	/* ------------ Hash commands ------------ */
 	/*
 	 * hdel,hexists,hget,hgetall,hincrby,hincrbyfloat,hkeys,hlen,hmget,hmset,hset
 	 * ,hsetnx,hvals,hscan
@@ -148,7 +148,7 @@ public interface DeerletRedisClient {
 
 	public void hscan();
 
-	/** List commands */
+	/* ------------ List commands ------------ */
 	/*
 	 * blpop,brpop,brpoplpush,lindex,linsert,llen,lpop,lpush,lpushx,lrange,lrem,lset
 	 * ,ltrim,rpop,rpoplpush,rpush,rpushx
@@ -188,7 +188,7 @@ public interface DeerletRedisClient {
 
 	public void rpushx();
 
-	/** Set commands */
+	/* ------------ Set commands ------------ */
 	/*
 	 * sadd,scard,sdiff,sdiffstore,sinter,sinterstore,sismember,smembers,smove,spop
 	 * ,srandmember,srem,sunion,sunionstore,sscan
@@ -224,7 +224,7 @@ public interface DeerletRedisClient {
 
 	public void sscan();
 
-	/** SortedSet commands */
+	/* ------------ SortedSet commands ------------ */
 	/*
 	 * zadd,zcard,zcount,zincrby,zrange,zrangebyscore,zrank,zrem,zremrangebyrank
 	 * ,zremrangebyscore,zrevrange,zrevrangebyscore,zrevrank,zscore,zunionstore,
@@ -271,7 +271,7 @@ public interface DeerletRedisClient {
 
 	public void zremrangebylex();
 
-	/** HyperLog commands */
+	/* ------------ HyperLog commands ------------ */
 	/* pfadd,pfcount,pfmerge */
 
 	public void pfadd();
@@ -280,7 +280,7 @@ public interface DeerletRedisClient {
 
 	public void pfmerge();
 
-	/** Pub/Sub commands */
+	/* ------------ Pub/Sub commands ------------ */
 	/* psubscribe,publish,pubsub,punsubscribe,subscribe,unsubscribe */
 
 	public void psubscribe();
@@ -295,7 +295,7 @@ public interface DeerletRedisClient {
 
 	public void unsubscribe();
 
-	/** Transaction commands */
+	/* ------------ Transaction commands ------------ */
 	/* discard,exec,multi,unwatch,watch */
 
 	public void discard();
@@ -308,7 +308,7 @@ public interface DeerletRedisClient {
 
 	public void watch();
 
-	/** Script commands */
+	/* ------------ Script commands ------------ */
 	/* eval,evalsha,script_exists,script_flush,script_kill,script_load */
 
 	public void eval();
@@ -323,7 +323,7 @@ public interface DeerletRedisClient {
 
 	public void scriptload();
 
-	/** Connection commands */
+	/* ------------ Connection commands ------------** */
 	/* auth,echo,ping,quit,select */
 
 	public void auth();
@@ -336,7 +336,7 @@ public interface DeerletRedisClient {
 
 	public boolean select(int index);
 
-	/** Server commands */
+	/* ------------ Server commands ------------ */
 	/*
 	 * bgrewriteaof,bgsave,client_getname,client_kill,client_list,client_setname
 	 * ,

@@ -23,8 +23,8 @@ public class DefaultServer implements Server {
 	}
 
 	/**
-	 * @param host
-	 * @param port
+	 * @param host hostname
+	 * @param port port
 	 */
 	public DefaultServer(String host, int port) {
 		super();

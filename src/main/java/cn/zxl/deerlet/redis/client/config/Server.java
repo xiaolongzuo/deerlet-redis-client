@@ -13,8 +13,8 @@ package cn.zxl.deerlet.redis.client.config;
  */
 public interface Server {
 
-	public String getHost();
+	String getHost();
 	
-	public int getPort();
+	int getPort();
 	
 }

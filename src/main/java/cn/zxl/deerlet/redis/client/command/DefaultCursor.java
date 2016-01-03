@@ -31,8 +31,8 @@ public class DefaultCursor implements Cursor {
 	}
 	
 	/**
-	 * @param cursorMap
-	 * @param list
+	 * @param cursorList
+	 * @param resultList
 	 */
 	public DefaultCursor(List<Integer> cursorList, List<String> resultList) {
 		super();
@@ -62,7 +62,7 @@ public class DefaultCursor implements Cursor {
 	}
 
 	/**
-	 * @param resultlist the resultlist to set
+	 * @param resultList the resultlist to set
 	 */
 	public void setResultList(List<String> resultList) {
 		this.resultList = resultList;
