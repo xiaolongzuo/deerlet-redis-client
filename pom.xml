@@ -85,6 +85,7 @@
                 <version>2.5</version>
                 <configuration>
                     <connectionUrl>scm:git:git@github.com:xiaolongzuo/deerlet-redis-client.git</connectionUrl>
+                    <tagBase>https://github.com/xiaolongzuo/deerlet-redis-client/tags</tagBase>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <useReleaseProfile>false</useReleaseProfile>
                     <releaseProfiles>release</releaseProfiles>
