@@ -13,3 +13,5 @@ tags
 *.aof
 *.rdb
 *.versionsBackup
+*.releaseBackup
+release.properties
