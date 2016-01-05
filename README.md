@@ -10,11 +10,11 @@ deerlet是一个简单易用的redis for java客户端，支持与spring无缝�
 5，支持集群，采用一致性hash策略。<br/>
 
 ## maven依赖坐标
-\<dependency\>
-    \<groupId\>com.zuoxiaolong\</groupId\>
-    \<artifactId\>deerlet-redis-client\</artifactId\>
-    \<version\>1.1\</version\>
-\</dependency\>
+\<dependency\><br/>
+    \<groupId\>com.zuoxiaolong\</groupId\><br/>
+    \<artifactId\>deerlet-redis-client\</artifactId\><br/>
+    \<version\>1.1\</version\><br/>
+\</dependency\><br/>
 
 ## 使用示例（直接使用）
 
