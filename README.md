@@ -11,9 +11,9 @@ deerlet是一个简单易用的redis for java客户端，支持与spring无缝�
 
 ## maven依赖坐标
 \<dependency\><br/>
-&nbsp;&nbsp;\<groupId\>com.zuoxiaolong\</groupId\><br/>
-    \<artifactId\>deerlet-redis-client\</artifactId\><br/>
-    \<version\>1.1\</version\><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;\<groupId\>com.zuoxiaolong\</groupId\><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;\<artifactId\>deerlet-redis-client\</artifactId\><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;\<version\>1.1\</version\><br/>
 \</dependency\><br/>
 
 ## 使用示例（直接使用）
