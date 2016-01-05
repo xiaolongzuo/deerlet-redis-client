@@ -9,6 +9,13 @@ deerlet是一个简单易用的redis for java客户端，支持与spring无缝�
 4，API完全与redis命令保持一致，减少学习成本。<br/>
 5，支持集群，采用一致性hash策略。<br/>
 
+## maven依赖坐标
+\<dependency\>
+    \<groupId\>com.zuoxiaolong\</groupId\>
+    \<artifactId\>deerlet-redis-client\</artifactId\>
+    \<version\>1.1\</version\>
+\</dependency\>
+
 ## 使用示例（直接使用）
 
 ### 1.在classpath（比如eclipse中src下）路径下添加以下文件，名为deerlet.properties
