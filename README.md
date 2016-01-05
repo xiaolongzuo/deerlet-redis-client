@@ -80,7 +80,7 @@ del,dump,exists,expire,expireat,keys,migrate,move,object,persist,pexpire<br/>
 ## 如何加入我们
 1, 首先安装一下git，并将代码clone到本地，切换到1.X分支<br/>
     git clone git@github.com:xiaolongzuo/deerlet-redis-client.git   //下载源码<br/>
-    git -c core.quotepath=false checkout -b branch-1.x  　　//切换到1.x分支<br/>
 2, 在本地电脑上下载并安装maven，或使用eclipse的maven插件都可以，因为deerlet的构建工具是maven<br/>
 3, 在本地电脑上安装redis，并启动三个redis实例，端口分别为6379,6479,6666<br/>
 4, redis启动以后，运行mvn test命令看是否能够通过单元测试<br/>
+5, 测试通过后,即可进行开发,欢迎提交PR.<br/>
